@@ -82,9 +82,13 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
+    <IncludePath>D:\SDL2\SDL2-2.0.20\include;D:\SDL2\SDL2-2.0.20\include\SDL_image;$(IncludePath)</IncludePath>
+    <LibraryPath>D:\SDL2\SDL2-2.0.20\lib\x64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
+    <IncludePath>D:\SDL2\SDL2-2.0.20\include;D:\SDL2\SDL2-2.0.20\include\SDL_image;$(IncludePath)</IncludePath>
+    <LibraryPath>D:\SDL2\SDL2-2.0.20\lib\x64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -130,6 +134,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>D:\SDL2\SDL2-2.0.20\lib\x64\SDL2.lib;D:\SDL2\SDL2-2.0.20\lib\x64\SDL2main.lib;D:\My_Lib\SDL2_image.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -146,6 +151,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>D:\SDL2\SDL2-2.0.20\lib\x64\SDL2.lib;D:\SDL2\SDL2-2.0.20\lib\x64\SDL2main.lib;D:\My_Lib\SDL2_image.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>

@@ -6,11 +6,15 @@
 
 #include <iostream>
 
+#define HIGHT 900
+#define WIDTH 900
+
 class Game {
 
 public:
 	Game();
 	~Game();
+	Universe universe;
 
 	void init(const char* title, int xpos, int ypos, int width, int height, bool fullscreen);
 	void update();
@@ -25,5 +29,4 @@ private:
 	SDL_Window* window;
 	SDL_Renderer* renderer;
 
-	Universe universe;
 };

@@ -1,30 +1,48 @@
 #include "Planet.h"
+#include "Game.h"
 
 #include "SDL_image.h"
 #include "SDL.h"
 
 #include <Windows.h>
 
+#define LOGAHELION false
+#define LOGXEQ0 false
+#define LOGL4 true
+
 const double PI = 3.1415;
 const double DENSITY = 1;
-const double G = 0.01;
+const double G = ( 1.0 / 128 );
 const double MOUSE = 100000;
 
-Planet::Planet(double mass, Vector position, Vector velocity, SDL_Renderer* renderer)
+extern Game* game;
+
+
+Planet::Planet(double mass, Vector position, Vector velocity, SDL_Renderer* renderer, int iNr)
 {
-	this->radius = std::cbrt(4 * mass / DENSITY / PI / 3);
+	this->radius = std::cbrt( mass / DENSITY / PI / 3);
+	if (this->radius < 1) this->radius = 1;
+
 	this->acceleration = Vector();
 	this->mass = mass;
 	this->position = position;
-	this->velocity = velocity;
+	this->velocity = velocity * sqrt( TIME_STEP );
+	this->Momentum = velocity * mass;
+	this->iNr = iNr;
+
 
 	SDL_Surface* tempSurface = IMG_Load("planet.png");
+	const char* q = SDL_GetError();
 	this->texture = SDL_CreateTextureFromSurface(renderer, tempSurface);
+	q = SDL_GetError();
 	SDL_FreeSurface(tempSurface);
 }
 
 void Planet::updateVelocity(std::vector<Planet*>& others)
 {
+	static long unsigned int luiLastIterations = 0;
+	static long unsigned int luiIterations = 0;
+
 	this->acceleration = Vector();
 
 	for (auto& other : others)
@@ -32,6 +50,11 @@ void Planet::updateVelocity(std::vector<Planet*>& others)
 		//cant collide with itself
 		if (other == this) continue;
 
+		Vector posV = other->position - this->position;
+		double distance = posV.Lenght();
+		Vector mag = posV / distance;
+
+#if 0
 		//collision
 		if (sqrt(pow((position.x + radius - other->position.x - other->radius), 2) + pow((position.y + radius - other->position.y - other->radius), 2)) < radius + other->radius)
 		{
@@ -48,20 +71,85 @@ void Planet::updateVelocity(std::vector<Planet*>& others)
 			{
 				other->mass += this->mass;
 				other->velocity += this->velocity * this->mass / other->mass;
-				//other->radius = std::cbrt(4 * mass / DENSITY / PI / 3);
 
 				others.erase(std::remove(others.begin(), others.end(), this), others.end());
 				return;
 			}
 		}//*/
+#endif
+#if LOGAHELION
+		// For log at aphelion
+		static unsigned int uiLast = 0;
 
-		Vector posV = other->position - this->position;
-		double distance = posV.Lenght(); 
-		Vector mag = posV / distance;
+		if (iNr == 2 && other->iNr == 0 ) {				// if log planet 2 ( going CV )
+			static long unsigned int luiIterations = 0;
+			static double  dLastDistance = 1e10;
+			static double  dLastLastDistance = 0;
+			unsigned int uiNow = SDL_GetTicks();
+			luiIterations++;
+
+			if (distance < dLastDistance && dLastDistance > dLastLastDistance)
+			{
+				printf("X:%.9g,  Y:%.9g, N:%lu, dN:%lu, t:%d, dt:%d\n",
+					posV.x, posV.y, luiIterations, luiIterations - luiLastIterations, uiNow, uiNow - uiLast);
+				uiLast = uiNow;
+				luiLastIterations = luiIterations;
+			}
+			dLastLastDistance = dLastDistance;
+			dLastDistance = distance;
+		}
+
+#endif
+#if LOGXEQ0
+		//  Going CV
+		static unsigned int uiLast = 0;
+
+		// For log a When crossing X-Axis when going CV
+		if (iNr == 2 && other->iNr == 1) {
+			static double  dLastX = 1e10;
+			luiIterations++;
+
+			if (dLastX < 0 && posV.x >= 0)
+			{
+				unsigned int uiNow = SDL_GetTicks();
+				printf("X:%.9g,  Y:%.9g, N:%lu, dN:%lu, t:%d, dt:%d\n  X:%.9g,  Y:%.9g\n",
+					position.x, position.y, luiIterations, luiIterations - luiLastIterations, uiNow, uiNow - uiLast,
+					other->position.x, other->position.y);
+				/*
+								printf("X:%.9g,  Y:%.9g, N:%lu, dN:%lu, t:%d, dt:%d\n",
+									posV.x, posV.y, luiIterations, luiIterations - luiLastIterations, uiNow, uiNow - uiLast) ;
+				*/
+				uiLast = uiNow;
+				luiLastIterations = luiIterations;
+			}
+			dLastX = posV.x;
+		}
+#endif
+#if LOGL4
+		//  Going CV
+		static unsigned int uiLast = 0;
+
+		// For log of L4 When planet crossing X-Axis when going CV
+		Planet* pL4 = game->universe.planets[2];			// L4
+		if (iNr == 1 && other->iNr == 2 ) {		// Planet and L4
+			static double  dLastX = 1e10;
+			luiIterations++;
+
+
+			if( dLastX < WIDTH / 2.0 && position.x >= WIDTH / 2.0 )
+			{
+				unsigned int uiNow = SDL_GetTicks();
+				printf("L4X:%.9g,  L4Y:%.9g, N:%lu, dN:%lu, t:%d, dt:%d\n",
+					pL4->position.x, pL4->position.y, luiIterations, luiIterations - luiLastIterations, uiNow, uiNow - uiLast);
+				uiLast = uiNow;
+				luiLastIterations = luiIterations;
+			}
+			dLastX = position.x;
+		}
+#endif
 
 		double force = this->mass * other->mass * G / pow(distance, 2);
-		this->acceleration += mag * force / this->mass;
-		this->radius = std::cbrt(4 * mass / DENSITY / PI / 3);
+		this->acceleration += ( mag * force / this->mass ) * TIME_STEP;
 	}
 
 	//mouse

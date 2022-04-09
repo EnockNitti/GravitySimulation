@@ -9,7 +9,9 @@ public:
 	void addPlanet(Planet* planet);
 	void update();
 	void render(SDL_Renderer* renderer);
+	void MomentumAdjust();
+	std::vector<Planet*> planets;
+
 
 private:
-	std::vector<Planet*> planets;
 };
