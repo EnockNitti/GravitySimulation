@@ -8,6 +8,10 @@
 
 #define HIGHT 900
 #define WIDTH 900
+#define PI 3.14159
+#define DENSITY 1.0
+#define G (1.0 / 128)
+#define MOUSE 100000.0
 
 class Game {
 

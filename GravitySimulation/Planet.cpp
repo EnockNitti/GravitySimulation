@@ -10,10 +10,6 @@
 #define LOGXEQ0 false
 #define LOGL4 true
 
-const double PI = 3.1415;
-const double DENSITY = 1;
-const double G = ( 1.0 / 128 );
-const double MOUSE = 100000;
 
 extern Game* game;
 
@@ -136,13 +132,18 @@ void Planet::updateVelocity(std::vector<Planet*>& others)
 			luiIterations++;
 
 
-			if( dLastX < WIDTH / 2.0 && position.x >= WIDTH / 2.0 )
+			if( dLastX < 0 && position.x >= 0 )
 			{
 				unsigned int uiNow = SDL_GetTicks();
-				printf("L4X:%.9g,  L4Y:%.9g, N:%lu, dN:%lu, t:%d, dt:%d\n",
-					pL4->position.x, pL4->position.y, luiIterations, luiIterations - luiLastIterations, uiNow, uiNow - uiLast);
+				printf("L4X:%.9g,  L4Y:%.9g, Dist:%.9g N:%lu, dN:%lu, t:%d, dt:%d\n",
+					pL4->position.x, pL4->position.y, distance, luiIterations, luiIterations - luiLastIterations, uiNow, uiNow - uiLast);
+//				printf("Y:%.9g\n", position.y);
 				uiLast = uiNow;
 				luiLastIterations = luiIterations;
+			}
+			else if (dLastX > 0 && position.x <= 0)
+			{
+//				printf("Y:%.9g\n", position.y);
 			}
 			dLastX = position.x;
 		}
@@ -183,8 +184,8 @@ void Planet::render(SDL_Renderer* renderer)
 {
 	this->destRect.w = this->destRect.h = this->radius * 2;
 
-	this->destRect.x = this->position.x - this->radius;
-	this->destRect.y = this->position.y - this->radius;
+	this->destRect.x = this->position.x - this->radius + WIDTH / 2;
+	this->destRect.y = HIGHT - ( this->position.y - this->radius + HIGHT / 2 );			// Y upp
 
 	SDL_RenderCopy(renderer, this->texture, 0, &destRect);
 }

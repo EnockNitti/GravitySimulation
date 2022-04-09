@@ -36,10 +36,10 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 	}
 
 	// 4 Planets in a circle
-/*	universe.addPlanet(new Planet(100000, Vector(200, 400), Vector(0, 1), renderer));
-	universe.addPlanet(new Planet(100000, Vector(600, 400), Vector(0, -1), renderer));
-	universe.addPlanet(new Planet(100000, Vector(400, 200), Vector(-1, 0), renderer));
-	universe.addPlanet(new Planet(100000, Vector(400, 600), Vector(1, 0), renderer));//*/
+/*	universe.addPlanet(new Planet(100000, Vector(-400, 0  ), Vector(0, 1), renderer));
+	universe.addPlanet(new Planet(100000, Vector( 400, 0 ), Vector(0, -1), renderer));
+	universe.addPlanet(new Planet(100000, Vector( 0, -400), Vector(-1, 0), renderer));
+	universe.addPlanet(new Planet(100000, Vector( 0, 400 ), Vector(1, 0), renderer));//*/
 
 /*	// Random planets
 	srand(time(NULL));
@@ -49,20 +49,29 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 	}//*/
 
 	// Orbiting planets
-	universe.addPlanet(new Planet(100000, Vector(width/2, height/2), Vector(0, 0), renderer));		//   "Sun"
-	universe.addPlanet(new Planet(1000, Vector(width / 2, height / 2 - height / 4), Vector(2, 0), renderer, 1));
-//	universe.addPlanet(new Planet(1000, Vector(width * 9 / 10 , height * 9 / 10 ), Vector( -0.25, 0.2), renderer, 1));
-//	universe.addPlanet(new Planet(1000, Vector(width/2, height/2 + height/4), Vector(-2, 0), renderer));//*/
+/*	universe.addPlanet(new Planet(100000, Vector( 0 , 0 ), Vector(0, 0 ), renderer));		//   "Sun"
+	universe.addPlanet(new Planet(1000, Vector(	0, 300 ), Vector( 0.75, 0 ), renderer, 1));
+	universe.addPlanet(new Planet(1000, Vector( 300 , -300 ), Vector( -0.25, 0.2), renderer, 0));
+	universe.addPlanet(new Planet(1000, Vector( 0, -300 ), Vector(-0.75, 0), renderer));//*/
 	
-	double z = height / 4;
-	double x = width / 2;
-	double pi2 = 3.14159 * 2;
+	// L4
+	
+	double dSun = 100000.0;
+	double dPlanet1 = 1000.0;
+	double dL40 = 0.01;
+	double z = 250;
+	double pi2 = PI * 2;
+	double speed = 2;
 
-	// L2
-	universe.addPlanet(new Planet( 0.1, Vector( x + cos( 30.0 / 360 * pi2 ) * z , height/2 - height/4 + sin( 30.0 / 360 * pi2) * z ),
-		Vector( sin(30.0 / 360 * pi2) * 2 , cos(30.0 / 360 * pi2) * 2 ), renderer, 2));//*/
+	speed = sqrt( G * ( (dSun + dPlanet1 ) / z ));
 
-	// Lagrange distance L1 L2. Not working
+	universe.addPlanet(new Planet(dSun, Vector(0, 0), Vector(0, 0), renderer));		//   "Sun"
+	universe.addPlanet(new Planet(dPlanet1, Vector(0, z), Vector(speed, 0), renderer, 1 ));
+
+	universe.addPlanet(new Planet(dL40, Vector( cos( 30.0 / 360 * pi2 ) * z , sin( 30.0 / 360 * pi2 ) * z ),
+		Vector( sin(30.0 / 360 * pi2) * speed, - cos(30.0 / 360 * pi2) * speed ), renderer, 2));//*/
+
+	// Lagrange L2. Not working
 //	double dDist = ( height / 2 ) * std::cbrt( 1000.0 / ( 3 * 100000.0 ));
 //	universe.addPlanet(new Planet( 0.1, Vector(width/2, height/2 - height/4 - dDist * 0.635), Vector( 2, 0), renderer));//*/
 

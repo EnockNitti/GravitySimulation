@@ -24,7 +24,7 @@ int main(int argc, char* argv[])
 	Uint32 uiTimeStart = 0;
 
 	game = new Game();
-	game->init("Gravity Simulation", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 900, 900, false);
+	game->init("Gravity Simulation", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WIDTH, HIGHT, false);
 
 	//ShowWindow(GetConsoleWindow(), SW_HIDE);
 
