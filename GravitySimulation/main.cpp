@@ -36,6 +36,8 @@ int main(int argc, char* argv[])
 		game->handleEvents();
 		game->update();
 
+//		exit(7);
+
 		if (uiNow >= uiTimeStart + frameDelay)
 		{
 			uiTimeStart = uiNow + frameDelay;

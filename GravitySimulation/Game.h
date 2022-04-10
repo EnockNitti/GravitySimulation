@@ -27,11 +27,11 @@ public:
 	void render();
 	void clean();
 	void handleEvents();
+	bool isRunning = false;
 
 	bool running() { return isRunning; };
 
 private:
-	bool isRunning = false;
 	SDL_Window* window = NULL;
 	SDL_Renderer* renderer = NULL;
 	SDL_Renderer* Mrenderer = NULL;
