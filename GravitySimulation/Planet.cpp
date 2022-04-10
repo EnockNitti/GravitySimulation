@@ -34,12 +34,7 @@ Planet::Planet(double mass, Vector position, Vector velocity, SDL_Renderer* rend
 	this->texture = SDL_CreateTextureFromSurface(renderer, tempSurface);
 	q = SDL_GetError();
 
-	printf("%s\n", q );
-
 	SDL_FreeSurface(tempSurface);
-	
-	printf("d   X:%.9g,  Y:%.9g  %d\n", this->position.x, this->position.x, this->iNr);
-
 }
 
 void Planet::updateVelocity(std::vector<Planet*>& others)
@@ -51,9 +46,6 @@ void Planet::updateVelocity(std::vector<Planet*>& others)
 
 	for (auto& other : others)
 	{
-		printf("b    X:%.9g,  Y:%.9g  %d\n", this->position.x, this->position.x, this->iNr);
-		SDL_Delay(1000);
-
 		if( this->iNr >= 100 && other->iNr == 1 ) // If marker and a planet
 		{
 			this->position = other->position;
@@ -96,9 +88,6 @@ void Planet::updateVelocity(std::vector<Planet*>& others)
 #if ELIPTIC
 		// For log at aphelion
 		static unsigned int uiLast = 0;
-
-		printf("h   X:%.9g,  Y:%.9g, N:%lu, dN:%lu, t:%d\n",
-			posV.x, posV.y, luiIterations, luiIterations - luiLastIterations, iNr);
 
 		if (iNr == 1 && other->iNr == 0 ) {				// if log planet ( going CV )
 			static long unsigned int luiIterations = 0;
@@ -181,8 +170,6 @@ void Planet::updateVelocity(std::vector<Planet*>& others)
 void Planet::updatePosition()
 {
 	this->position += this->velocity;
-//	SDL_Delay(100);
-
 }
 
 void Planet::render(SDL_Renderer* renderer)

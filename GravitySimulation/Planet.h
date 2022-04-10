@@ -6,8 +6,8 @@
 
 #define TIME_STEP ( 1.0 / 0x10000000 )
 
-#define ELIPTIC true
-#define LOGL4 false
+#define ELIPTIC false
+#define LOGL4 true
 #define LOGL2 false
 
 

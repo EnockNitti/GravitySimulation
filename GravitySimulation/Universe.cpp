@@ -9,17 +9,11 @@ void Universe::update()
 {
 	for (auto& planet : planets)
 	{
-		printf("a    X:%.9g,  Y:%.9g  %d\n", planet->position.x, planet->position.x, planet->iNr);
-
-		SDL_Delay(1);
-
 		planet->updateVelocity(planets);
 	}
 
 	for (auto& planet : planets)
 	{
-		SDL_Delay(1);
-
 		planet->updatePosition();
 	}
 
