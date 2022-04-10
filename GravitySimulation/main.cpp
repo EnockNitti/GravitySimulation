@@ -9,7 +9,7 @@
  You need SDL2.lib, SDL2main.lib, zlib1.dll, libpng16-16.dll, SDL2.dll, SDL2_image.dll,
  and SDL-includes to run this when using VS2019
 
- Corrent config is a test of L4
+ Corrent config is a test of L2
 
  Just modified code from GitHub/Feeeeddmmmeee
 */

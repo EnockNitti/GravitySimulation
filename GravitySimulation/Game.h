@@ -12,6 +12,8 @@
 #define DENSITY 1.0
 #define G (1.0 / 128)
 #define MOUSE 100000.0
+#define pi2 ( PI * 2)
+
 
 class Game {
 
@@ -29,8 +31,9 @@ public:
 	bool running() { return isRunning; };
 
 private:
-	bool isRunning;
-	SDL_Window* window;
-	SDL_Renderer* renderer;
+	bool isRunning = false;
+	SDL_Window* window = NULL;
+	SDL_Renderer* renderer = NULL;
+	SDL_Renderer* Mrenderer = NULL;
 
 };

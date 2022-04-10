@@ -44,6 +44,17 @@ Vector& Vector::Divide(const Vector& vec)
 	return *this;
 }
 
+// Rotate around origo
+Vector& Vector::Rotate(const double& Alpha)
+{
+	//	x_rotated = ((x - dx) * cos(angle)) - ((y - dy) * sin(angle)) + dx
+	//	y_rotated = ((x - dx) * sin(angle)) + ((y - dy) * cos(angle)) + dy
+	double x0 = x * cos(Alpha) - y * sin(Alpha);
+	y = x * sin(Alpha) + y * cos(Alpha);
+	x = x0;
+	return *this;
+}
+
 Vector& operator+(Vector vec1, const Vector vec2)
 {
 	return vec1.Add(vec2);

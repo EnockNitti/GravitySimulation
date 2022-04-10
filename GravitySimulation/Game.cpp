@@ -53,27 +53,53 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 	universe.addPlanet(new Planet(1000, Vector(	0, 300 ), Vector( 0.75, 0 ), renderer, 1));
 	universe.addPlanet(new Planet(1000, Vector( 300 , -300 ), Vector( -0.25, 0.2), renderer, 0));
 	universe.addPlanet(new Planet(1000, Vector( 0, -300 ), Vector(-0.75, 0), renderer));//*/
-	
-	// L4
-	
+
+
+#if ELIPTIC
+
 	double dSun = 100000.0;
 	double dPlanet1 = 1000.0;
-	double dL40 = 0.01;
-	double z = 250;
-	double pi2 = PI * 2;
-	double speed = 2;
 
-	speed = sqrt( G * ( (dSun + dPlanet1 ) / z ));
+	universe.addPlanet(new Planet(dSun, Vector(0, 0), Vector(0, 0), renderer, 0));		//   "Sun"
+	universe.addPlanet(new Planet(dPlanet1, Vector( 300, 300 ), Vector( 0.3, -0.3), renderer, 1));
+
+#endif
+
+
+#if	LOGL4
+		// L4
+
+	double dSun = 100000.0;
+	double dPlanet1 = 1000.0;
+	double dL4 = 0.01;
+	double z = 250;
+	double speed = sqrt( G * ( (dSun + dPlanet1 ) / z ));
 
 	universe.addPlanet(new Planet(dSun, Vector(0, 0), Vector(0, 0), renderer));		//   "Sun"
 	universe.addPlanet(new Planet(dPlanet1, Vector(0, z), Vector(speed, 0), renderer, 1 ));
+	universe.addPlanet(new Planet(dL4, Vector(cos(30.0 / 360 * pi2) * z, sin(30.0 / 360 * pi2) * z),
+		Vector(sin(30.0 / 360 * pi2) * speed, -cos(30.0 / 360 * pi2) * speed), renderer, 2));//*/
+	// Marker
+	universe.addPlanet(new Planet(dL4, Vector(cos(30.0 / 360 * pi2) * z, sin(30.0 / 360 * pi2) * z), Vector( 0,0 ), renderer, 100));//*/
 
-	universe.addPlanet(new Planet(dL40, Vector( cos( 30.0 / 360 * pi2 ) * z , sin( 30.0 / 360 * pi2 ) * z ),
-		Vector( sin(30.0 / 360 * pi2) * speed, - cos(30.0 / 360 * pi2) * speed ), renderer, 2));//*/
 
-	// Lagrange L2. Not working
-//	double dDist = ( height / 2 ) * std::cbrt( 1000.0 / ( 3 * 100000.0 ));
-//	universe.addPlanet(new Planet( 0.1, Vector(width/2, height/2 - height/4 - dDist * 0.635), Vector( 2, 0), renderer));//*/
+#endif
+
+
+#if	LOGL2
+	double dSun = 100000.0;
+	double dPlanet1 = 1000.0;
+	double dL2 = 0.01;
+	double z = 250;
+	double speed = sqrt(G * ((dSun + dPlanet1) / z));
+
+	universe.addPlanet(new Planet(dSun, Vector(0, 0), Vector(0, 0), renderer));		//   "Sun"
+	universe.addPlanet(new Planet(dPlanet1, Vector(0, z), Vector(speed, 0), renderer, 1));
+
+	// Lagrange L2
+	double dDist = z * std::cbrt( 1000.0 / ( 3 * 101000.0 ));
+	universe.addPlanet( new Planet( dL2, Vector( 0, z + dDist ), Vector(speed + 0.3382, 0), renderer, 4 ));//*/
+#endif
 
 	// This correction is needed for "unsymmetrical" systems like earth-moon
 

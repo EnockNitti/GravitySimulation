@@ -49,5 +49,8 @@
     <Image Include="planet.png">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="Marker.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>

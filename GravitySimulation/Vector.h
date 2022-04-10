@@ -13,6 +13,7 @@ struct Vector
 	Vector& Substract(const Vector& vec);
 	Vector& Multiply(const Vector& vec);
 	Vector& Divide(const Vector& vec);
+	Vector& Rotate(const double& Alpha);
 
 	friend Vector& operator+(Vector vec1, const Vector vec2);
 	friend Vector& operator-(Vector vec1, const Vector vec2);

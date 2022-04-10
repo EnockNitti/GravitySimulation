@@ -6,29 +6,31 @@
 
 #include <Windows.h>
 
-#define LOGAHELION false
-#define LOGXEQ0 false
-#define LOGL4 true
-
 
 extern Game* game;
 
 
 Planet::Planet(double mass, Vector position, Vector velocity, SDL_Renderer* renderer, int iNr)
 {
-	this->radius = std::cbrt( mass / DENSITY / PI / 3);
+	this->radius = std::cbrt(mass / DENSITY / PI / 3);
 	if (this->radius < 1) this->radius = 1;
 
 	this->acceleration = Vector();
 	this->mass = mass;
 	this->position = position;
-	this->velocity = velocity * sqrt( TIME_STEP );
+	this->velocity = velocity * sqrt(TIME_STEP);
 	this->Momentum = velocity * mass;
 	this->iNr = iNr;
 
+	const char* q;
+	SDL_Surface* tempSurface;
 
-	SDL_Surface* tempSurface = IMG_Load("planet.png");
-	const char* q = SDL_GetError();
+	if (iNr < 100 )
+		tempSurface = IMG_Load("planet.png");
+	else
+		tempSurface = IMG_Load("Marker.png");
+	q = SDL_GetError();
+
 	this->texture = SDL_CreateTextureFromSurface(renderer, tempSurface);
 	q = SDL_GetError();
 	SDL_FreeSurface(tempSurface);
@@ -43,8 +45,16 @@ void Planet::updateVelocity(std::vector<Planet*>& others)
 
 	for (auto& other : others)
 	{
+#if 1
+		if( this->iNr >= 100 && other->iNr == 1 ) // If marker and a planet
+		{
+			this->position = other->position;
+			this->position.Rotate(pi2 * -60 / 360);
+			continue;
+		}
+#endif
 		//cant collide with itself
-		if (other == this) continue;
+		if (other == this || this->iNr >= 100 || other->iNr >= 100 ) continue;
 
 		Vector posV = other->position - this->position;
 		double distance = posV.Lenght();
@@ -73,11 +83,13 @@ void Planet::updateVelocity(std::vector<Planet*>& others)
 			}
 		}//*/
 #endif
-#if LOGAHELION
+
+
+#if ELIPTIC
 		// For log at aphelion
 		static unsigned int uiLast = 0;
 
-		if (iNr == 2 && other->iNr == 0 ) {				// if log planet 2 ( going CV )
+		if (iNr == 1 && other->iNr == 0 ) {				// if log planet ( going CV )
 			static long unsigned int luiIterations = 0;
 			static double  dLastDistance = 1e10;
 			static double  dLastLastDistance = 0;
@@ -94,14 +106,14 @@ void Planet::updateVelocity(std::vector<Planet*>& others)
 			dLastLastDistance = dLastDistance;
 			dLastDistance = distance;
 		}
-
 #endif
-#if LOGXEQ0
+
+#if false
 		//  Going CV
 		static unsigned int uiLast = 0;
 
 		// For log a When crossing X-Axis when going CV
-		if (iNr == 2 && other->iNr == 1) {
+		if (iNr == 1 && other->iNr == 0) {
 			static double  dLastX = 1e10;
 			luiIterations++;
 
@@ -121,6 +133,7 @@ void Planet::updateVelocity(std::vector<Planet*>& others)
 			dLastX = posV.x;
 		}
 #endif
+
 #if LOGL4
 		//  Going CV
 		static unsigned int uiLast = 0;
@@ -148,31 +161,10 @@ void Planet::updateVelocity(std::vector<Planet*>& others)
 			dLastX = position.x;
 		}
 #endif
-
 		double force = this->mass * other->mass * G / pow(distance, 2);
-		this->acceleration += ( mag * force / this->mass ) * TIME_STEP;
+		this->acceleration += (mag * force / this->mass) * TIME_STEP;
 	}
-
-	//mouse
-	/*POINT p;
-	HWND handle;
-	handle = FindWindowA(NULL, "Gravity Simulation");
-	if (GetCursorPos(&p))
-	{
-		if (ScreenToClient(handle, &p))
-		{
-			Vector mouse = Vector(p.x, p.y);
-
-			Vector posV = mouse - this->position;
-			double distance = posV.Lenght();
-			Vector mag = posV / distance;
-
-			double force = this->mass * MOUSE * G / pow(distance, 2);
-			this->acceleration += mag * force / this->mass;
-		}
-	}//*/
-
-	this->velocity += this->acceleration;
+		this->velocity += this->acceleration;
 }
 
 void Planet::updatePosition()
@@ -182,10 +174,13 @@ void Planet::updatePosition()
 
 void Planet::render(SDL_Renderer* renderer)
 {
-	this->destRect.w = this->destRect.h = this->radius * 2;
+	this->destRect.w = this->destRect.h = (int)this->radius * 2;
 
-	this->destRect.x = this->position.x - this->radius + WIDTH / 2;
-	this->destRect.y = HIGHT - ( this->position.y - this->radius + HIGHT / 2 );			// Y upp
+	this->destRect.x = (int)(this->position.x - this->radius + WIDTH / 2);
+	this->destRect.y = HIGHT - (int)( this->position.y - this->radius + HIGHT / 2 );			// Y upp
 
-	SDL_RenderCopy(renderer, this->texture, 0, &destRect);
+	if( iNr >= 100 )
+		SDL_RenderCopy(renderer, this->texture, 0, &destRect);
+	else
+		SDL_RenderCopy(renderer, this->texture, 0, &destRect);
 }
