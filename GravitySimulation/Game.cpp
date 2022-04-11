@@ -87,7 +87,8 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 
 
 #if	LOGL2
-	double dSun = 100000.0;
+	double dSun = 1000000.0;
+//	double dSun = 100000.0;
 	double dPlanet1 = 1000.0;
 	double dL2 = 0.01;
 	double z = 250;
@@ -97,12 +98,19 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 	universe.addPlanet(new Planet(dPlanet1, Vector(0, z), Vector(speed, 0), renderer, 1));
 
 	// Lagrange L2
-	double dDist = z * std::cbrt( 1000.0 / ( 3 * 101000.0 ));
-	universe.addPlanet( new Planet( dL2, Vector( 0, z + dDist ), Vector(speed + 0.3382, 0), renderer, 4 ));//*/
+	double dL2Dist = z * std::cbrt(dPlanet1 / ( 3 * ( dSun + dPlanet1 )));		// First aprox
+	dL2Dist += 0.401793935;			// The fiddle factor needed for the L2 satellite to stay in place for at least 1.5 of a revolution..... :)
+	double speedL2 = speed * (z + dL2Dist) / z;
+	
+	// L2 satellite
+	universe.addPlanet(new Planet( dL2, Vector(0, z + dL2Dist), Vector(speedL2, 0), renderer, 4));//*/
+
+	// Theoretical postition for L2  ( red )
+	universe.addPlanet(new Planet( 0.00001, Vector(0, z + dL2Dist), Vector(0, 0), renderer, 101, dL2Dist ));//*/
+
 #endif
 
 	// This correction is needed for "unsymmetrical" systems like earth-moon
-
 	universe.MomentumAdjust();
 }
 

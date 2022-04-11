@@ -10,7 +10,7 @@
 extern Game* game;
 
 
-Planet::Planet(double mass, Vector position, Vector velocity, SDL_Renderer* renderer, int iNr)
+Planet::Planet(double mass, Vector position, Vector velocity, SDL_Renderer* renderer, int iNr, double dL2Dist )
 {
 	this->radius = std::cbrt(mass / DENSITY / PI / 3);
 	if (this->radius < 1) this->radius = 1;
@@ -21,6 +21,7 @@ Planet::Planet(double mass, Vector position, Vector velocity, SDL_Renderer* rend
 	this->velocity = velocity * sqrt(TIME_STEP);
 	this->Momentum = velocity * mass;
 	this->iNr = iNr;
+	this->dL2Dist = dL2Dist;
 
 	const char* q;
 	SDL_Surface* tempSurface;
@@ -46,12 +47,22 @@ void Planet::updateVelocity(std::vector<Planet*>& others)
 
 	for (auto& other : others)
 	{
-		if( this->iNr >= 100 && other->iNr == 1 ) // If marker and a planet
+		if (this->iNr == 100 && other->iNr == 1) // If marker and a planet L4
 		{
 			this->position = other->position;
 			this->position.Rotate(pi2 * -60 / 360);
 			continue;
 		}
+
+		if (this->iNr == 101 && other->iNr == 1) // If marker and a planet L2
+		{
+			this->position = other->position;
+			this->position.Extend(this->dL2Dist);
+			continue;
+		}
+
+
+
 
 		//cant collide with itself
 		if (other == this || this->iNr >= 100 || other->iNr >= 100 ) continue;
@@ -108,21 +119,24 @@ void Planet::updateVelocity(std::vector<Planet*>& others)
 		}
 #endif
 
-#if false
+#if LOGL2
 		//  Going CV
 		static unsigned int uiLast = 0;
 
-		// For log a When crossing X-Axis when going CV
-		if (iNr == 1 && other->iNr == 0) {
-			static double  dLastX = 1e10;
+		// For log a When crossing Axis 
+		if (iNr == 1 && other->iNr == 4 ) {
+			static double  dLastX = -1;
+			static double  dLastY = -1;
 			luiIterations++;
 
-			if (dLastX < 0 && posV.x >= 0)
+			if( /*dLastX * position.x <= 0.0 || */ dLastY * position.y <= 0.0 )
 			{
 				unsigned int uiNow = SDL_GetTicks();
-				printf("X:%.9g,  Y:%.9g, N:%lu, dN:%lu, t:%d, dt:%d\n  X:%.9g,  Y:%.9g\n",
-					position.x, position.y, luiIterations, luiIterations - luiLastIterations, uiNow, uiNow - uiLast,
-					other->position.x, other->position.y);
+				printf("X:%.9g, Y:%.9g,  Xv:%.9g, Yv:%.9g, N:%lu, dN:%lu, t:%d, dt:%d\n",
+					position.x, position.y, velocity.x, velocity.y, luiIterations, luiIterations - luiLastIterations, uiNow, uiNow - uiLast);
+
+				printf("X:%.9g, Y:%.9g,  Xv:%.9g,  Yv:%.9g\n",
+					other->position.x, other->position.y, other->velocity.x, other->velocity.y);
 				/*
 								printf("X:%.9g,  Y:%.9g, N:%lu, dN:%lu, t:%d, dt:%d\n",
 									posV.x, posV.y, luiIterations, luiIterations - luiLastIterations, uiNow, uiNow - uiLast) ;
@@ -130,7 +144,8 @@ void Planet::updateVelocity(std::vector<Planet*>& others)
 				uiLast = uiNow;
 				luiLastIterations = luiIterations;
 			}
-			dLastX = posV.x;
+			dLastX = position.x;
+			dLastY = position.y;
 		}
 #endif
 
@@ -177,12 +192,10 @@ void Planet::render(SDL_Renderer* renderer)
 	this->destRect.w = this->destRect.h = (int)this->radius * 2;
 
 	this->destRect.x = (int)(this->position.x - this->radius + WIDTH / 2);
-	this->destRect.y = HIGHT - (int)( this->position.y - this->radius + HIGHT / 2 );			// Y upp
+	this->destRect.y = HIGHT - (int)( this->position.y + this->radius + HIGHT / 2 );			// Y upp
 
 	if( iNr >= 100 )
 		SDL_RenderCopy(renderer, this->texture, 0, &destRect);
 	else
 		SDL_RenderCopy(renderer, this->texture, 0, &destRect);
-
-//	exit(4);
 }

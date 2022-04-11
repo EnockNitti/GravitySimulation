@@ -1,4 +1,5 @@
 #include "Vector.h"
+#include "math.h"
 
 Vector::Vector()
 {
@@ -52,8 +53,20 @@ Vector& Vector::Rotate(const double& Alpha)
 	double x0 = x * cos(Alpha) - y * sin(Alpha);
 	y = x * sin(Alpha) + y * cos(Alpha);
 	x = x0;
+
 	return *this;
 }
+
+Vector& Vector::Extend(const double& dLen)
+{
+	double alpha = atan2( this->y, this->x );
+	this->y += sin(alpha) * dLen;
+	this->x += cos(alpha) * dLen;
+
+	return *this;
+}
+
+
 
 Vector& operator+(Vector vec1, const Vector vec2)
 {

@@ -14,6 +14,7 @@ struct Vector
 	Vector& Multiply(const Vector& vec);
 	Vector& Divide(const Vector& vec);
 	Vector& Rotate(const double& Alpha);
+	Vector& Extend(const double& dlen );
 
 	friend Vector& operator+(Vector vec1, const Vector vec2);
 	friend Vector& operator-(Vector vec1, const Vector vec2);
