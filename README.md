@@ -9,7 +9,7 @@ In the code are various possible combinations activated with "#if true"s.
 I have added 3 combinations.   
 A single planet in an elliptic orbit. Just to check the long term stability.   
 A single planet in an circular orbit having a satellite at Lagrange 4. Has long term stability.   
-A single planet in an circular orbit having a satellite at Lagrange 2. Despite my fiddling. Runs only for ~1.5 revolution before running of.   
+A single planet in an circular orbit having a satellite at Lagrange 2. Despite my fiddling. Runs only for ~1.5 revolution before running off.   
 
  You need SDL2.lib, SDL2main.lib, zlib1.dll, libpng16-16.dll, SDL2.dll, SDL2_image.dll,
  and SDL-includes to run this when using VS2019
