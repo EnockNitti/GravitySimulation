@@ -28,12 +28,12 @@ public:
 	void clean();
 	void handleEvents();
 	bool isRunning = false;
+	SDL_Texture* texture;
 
 	bool running() { return isRunning; };
 
 private:
 	SDL_Window* window = NULL;
 	SDL_Renderer* renderer = NULL;
-	SDL_Renderer* Mrenderer = NULL;
 
 };

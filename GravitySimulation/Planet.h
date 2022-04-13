@@ -7,15 +7,16 @@
 #define TIME_STEP ( 1.0 / 0x10000000 )
 
 #define ELIPTIC false
-#define LOGL4 false
-#define LOGL2 true
+#define LOGL4 true
+#define LOGL2 false
 
 
 struct Planet
 {
 	double radius, mass;
 	Vector position, velocity, acceleration, Momentum;
-	int iNr, dL2Dist;  
+	int		iNr;
+	double	dL2Dist;  
 	
 	SDL_Rect srcRect, destRect;
 	SDL_Texture* texture;

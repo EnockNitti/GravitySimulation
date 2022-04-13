@@ -19,11 +19,11 @@ void Universe::update()
 
 }
 
+// Render all planets
 void Universe::render(SDL_Renderer* renderer)
 {
 	for (auto& planet : planets)
 	{
-		SDL_Delay(1);
 		planet->render(renderer);
 	}
 }

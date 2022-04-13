@@ -32,6 +32,11 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 			std::cout << "Renderer Created!" << std::endl;
 		}
 
+
+//		SDL_Surface* tempSurface;
+//		this->texture = SDL_CreateTextureFromSurface(renderer, tempSurface);
+
+
 		isRunning = true;
 	}
 
@@ -119,12 +124,62 @@ void Game::update()
 	this->universe.update();
 }
 
+extern bool saveScreenshotBMP(std::string filepath, SDL_Window* SDLWindow, SDL_Renderer* SDLRenderer);
+
+
+// Clear "universe", Render planets, present new universe
 void Game::render()
 {
-	SDL_RenderClear(renderer);
+	static int iCnt = 0;
+	const char* p;
+	SDL_Texture* OldImage;
 
-	this->universe.render(this->renderer);
+	OldImage = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, WIDTH, HIGHT);
 
+	if (iCnt++ < 100 || true) {
+		SDL_Texture* OldImage = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, WIDTH, HIGHT);
+		p = SDL_GetError();
+
+		SDL_RenderClear(renderer);
+
+		SDL_SetTextureBlendMode(OldImage, SDL_BLENDMODE_BLEND);
+		p = SDL_GetError();
+		SDL_SetTextureAlphaMod(OldImage, 250);
+		p = SDL_GetError();
+		SDL_RenderCopy(renderer, OldImage, NULL, NULL);
+		p = SDL_GetError();
+
+		//Planets
+		this->universe.render(this->renderer);
+
+
+		if (iCnt == 100) {
+			bool OK = saveScreenshotBMP("D:/test.bmp", window, renderer);
+		}
+
+
+
+	}
+	else {
+		SDL_SetTextureBlendMode(OldImage, SDL_BLENDMODE_NONE);
+		p = SDL_GetError();
+		SDL_SetTextureAlphaMod(OldImage, 250);
+		p = SDL_GetError();
+		SDL_Rect Rect;
+		Rect.x = 0;
+		Rect.y = 0;
+		Rect.w = WIDTH;
+		Rect.y = HIGHT;
+		SDL_RenderCopy(renderer, OldImage, &Rect, &Rect);
+/*
+		int SDL_RenderReadPixels(SDL_Renderer * renderer,
+			const SDL_Rect * rect,
+			Uint32 format,
+			void* pixels, int pitch);
+*/
+
+
+	}
 	SDL_RenderPresent(renderer);
 }
 

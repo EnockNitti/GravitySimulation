@@ -187,6 +187,7 @@ void Planet::updatePosition()
 	this->position += this->velocity;
 }
 
+// Render one planet
 void Planet::render(SDL_Renderer* renderer)
 {
 	this->destRect.w = this->destRect.h = (int)this->radius * 2;
@@ -194,8 +195,5 @@ void Planet::render(SDL_Renderer* renderer)
 	this->destRect.x = (int)(this->position.x - this->radius + WIDTH / 2);
 	this->destRect.y = HIGHT - (int)( this->position.y + this->radius + HIGHT / 2 );			// Y upp
 
-	if( iNr >= 100 )
-		SDL_RenderCopy(renderer, this->texture, 0, &destRect);
-	else
-		SDL_RenderCopy(renderer, this->texture, 0, &destRect);
+	SDL_RenderCopy(renderer, this->texture, 0, &destRect);
 }
