@@ -124,7 +124,7 @@ void Game::update()
 	this->universe.update();
 }
 
-extern bool saveScreenshotBMP(std::string filepath, SDL_Window* SDLWindow, SDL_Renderer* SDLRenderer);
+extern SDL_Surface * saveScreenshotBMP( SDL_Window* SDLWindow, SDL_Renderer* SDLRenderer);
 
 
 // Clear "universe", Render planets, present new universe
@@ -132,53 +132,90 @@ void Game::render()
 {
 	static int iCnt = 0;
 	const char* p;
-	SDL_Texture* OldImage;
+	static SDL_Texture* tOldImage = NULL;
+	SDL_Surface* sOldImage = NULL;
 
-	OldImage = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, WIDTH, HIGHT);
+
 
 	if (iCnt++ < 100 || true) {
-		SDL_Texture* OldImage = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, WIDTH, HIGHT);
 		p = SDL_GetError();
 
 		SDL_RenderClear(renderer);
 
-		SDL_SetTextureBlendMode(OldImage, SDL_BLENDMODE_BLEND);
+/*		SDL_SetTextureBlendMode( tOldImage, SDL_BLENDMODE_BLEND);
+		p = SDL_GetError(); //*/
+		SDL_SetTextureAlphaMod( tOldImage, 255 );
 		p = SDL_GetError();
-		SDL_SetTextureAlphaMod(OldImage, 250);
-		p = SDL_GetError();
-		SDL_RenderCopy(renderer, OldImage, NULL, NULL);
+		SDL_RenderCopy(renderer, tOldImage, NULL, NULL);
 		p = SDL_GetError();
 
-		//Planets
+		// render all new stuff
 		this->universe.render(this->renderer);
 
-
+		// Save an old image just for test
 		if (iCnt == 100) {
-			bool OK = saveScreenshotBMP("D:/test.bmp", window, renderer);
+			SDL_Surface* saveSurface = NULL;
+			SDL_Surface* infoSurface = NULL;
+
+			infoSurface = SDL_GetWindowSurface( window);
+			if (infoSurface == NULL) {
+				p = SDL_GetError();
+				return;
+			}
+
+			unsigned char* pixels = new unsigned char[infoSurface->w * infoSurface->h * infoSurface->format->BytesPerPixel];
+			if (infoSurface == NULL) {
+				p = SDL_GetError();
+			}
+			
+
+			if (SDL_RenderReadPixels(renderer, &infoSurface->clip_rect, infoSurface->format->format,
+					pixels, infoSurface->w * infoSurface->format->BytesPerPixel) != 0) {
+				p = SDL_GetError();
+			}
+
+			
+			saveSurface = SDL_CreateRGBSurfaceFrom(pixels, infoSurface->w, infoSurface->h,
+				infoSurface->format->BitsPerPixel, infoSurface->w * infoSurface->format->BytesPerPixel, infoSurface->format->Rmask,
+				infoSurface->format->Gmask, infoSurface->format->Bmask, infoSurface->format->Amask);
+
+			if (saveSurface == NULL) {
+				p = SDL_GetError();
+			}
+
+			saveSurface = saveScreenshotBMP(window, renderer);
+			if (!sOldImage) {
+				printf("saveScreenshotBMP failed: %s\n", SDL_GetError());
+				SDL_FreeSurface(sOldImage);
+			}
+			else {
+				SDL_Texture* tOldImage = SDL_CreateTextureFromSurface( this->renderer, sOldImage );
+				if (!tOldImage) {
+					p = SDL_GetError();
+				}
+
+				int width, height, access;
+				unsigned int format;
+				SDL_QueryTexture(tOldImage, &format, &access, &width, &height);
+
+				const SDL_Rect rect;
+				void* pixels;
+				int pitch;
+
+				int i = SDL_LockTexture( tOldImage, &rect, &pixels, &pitch);
+				p = SDL_GetError();
+
+				for (int i = 0; i < 3240000; i++) {
+					char* pc = (char*
+						)pixels;
+					char c = pc[i];
+					if ( c != 0 )
+						printf("%d %d\n", i, c );
+				}
+//*/
+				SDL_FreeSurface(sOldImage);
+			}
 		}
-
-
-
-	}
-	else {
-		SDL_SetTextureBlendMode(OldImage, SDL_BLENDMODE_NONE);
-		p = SDL_GetError();
-		SDL_SetTextureAlphaMod(OldImage, 250);
-		p = SDL_GetError();
-		SDL_Rect Rect;
-		Rect.x = 0;
-		Rect.y = 0;
-		Rect.w = WIDTH;
-		Rect.y = HIGHT;
-		SDL_RenderCopy(renderer, OldImage, &Rect, &Rect);
-/*
-		int SDL_RenderReadPixels(SDL_Renderer * renderer,
-			const SDL_Rect * rect,
-			Uint32 format,
-			void* pixels, int pitch);
-*/
-
-
 	}
 	SDL_RenderPresent(renderer);
 }

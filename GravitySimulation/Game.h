@@ -28,7 +28,7 @@ public:
 	void clean();
 	void handleEvents();
 	bool isRunning = false;
-	SDL_Texture* texture;
+//	SDL_Texture* texture;
 
 	bool running() { return isRunning; };
 
