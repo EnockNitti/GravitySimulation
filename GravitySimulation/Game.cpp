@@ -135,19 +135,19 @@ void Game::render()
 	static SDL_Texture* tOldImage = NULL;
 	SDL_Surface* sOldImage = NULL;
 
-
-
 	if (iCnt++ < 100 || true) {
-		p = SDL_GetError();
 
 		SDL_RenderClear(renderer);
 
-/*		SDL_SetTextureBlendMode( tOldImage, SDL_BLENDMODE_BLEND);
-		p = SDL_GetError(); //*/
-		SDL_SetTextureAlphaMod( tOldImage, 255 );
-		p = SDL_GetError();
-		SDL_RenderCopy(renderer, tOldImage, NULL, NULL);
-		p = SDL_GetError();
+		if (tOldImage) {
+			SDL_SetTextureBlendMode(tOldImage, SDL_BLENDMODE_BLEND);
+			p = SDL_GetError(); //*/
+			SDL_SetTextureAlphaMod(tOldImage, 255);
+			p = SDL_GetError();
+			SDL_RenderCopy(renderer, tOldImage, NULL, NULL);
+			p = SDL_GetError();
+
+		}
 
 		// render all new stuff
 		this->universe.render(this->renderer);
@@ -163,58 +163,41 @@ void Game::render()
 				return;
 			}
 
-			unsigned char* pixels = new unsigned char[infoSurface->w * infoSurface->h * infoSurface->format->BytesPerPixel];
+			int nBytes = infoSurface->w * infoSurface->h * infoSurface->format->BytesPerPixel;
+			unsigned char* pixels = new unsigned char[nBytes];
 			if (infoSurface == NULL) {
 				p = SDL_GetError();
 			}
-			
+#if 0
+			// Just to check that we got pixels
+			for (int i = 0; i < nBytes; i++) {
+				char* pc = (char*
+					)pixels;
+				char c = pc[i];
+				if (c != 0)
+					printf("%d %d\n", i, c);
+			}
+#endif
 
 			if (SDL_RenderReadPixels(renderer, &infoSurface->clip_rect, infoSurface->format->format,
 					pixels, infoSurface->w * infoSurface->format->BytesPerPixel) != 0) {
 				p = SDL_GetError();
 			}
-
 			
 			saveSurface = SDL_CreateRGBSurfaceFrom(pixels, infoSurface->w, infoSurface->h,
 				infoSurface->format->BitsPerPixel, infoSurface->w * infoSurface->format->BytesPerPixel, infoSurface->format->Rmask,
 				infoSurface->format->Gmask, infoSurface->format->Bmask, infoSurface->format->Amask);
-
 			if (saveSurface == NULL) {
 				p = SDL_GetError();
 			}
 
-			saveSurface = saveScreenshotBMP(window, renderer);
-			if (!sOldImage) {
-				printf("saveScreenshotBMP failed: %s\n", SDL_GetError());
-				SDL_FreeSurface(sOldImage);
-			}
-			else {
-				SDL_Texture* tOldImage = SDL_CreateTextureFromSurface( this->renderer, sOldImage );
-				if (!tOldImage) {
-					p = SDL_GetError();
-				}
-
-				int width, height, access;
-				unsigned int format;
-				SDL_QueryTexture(tOldImage, &format, &access, &width, &height);
-
-				const SDL_Rect rect;
-				void* pixels;
-				int pitch;
-
-				int i = SDL_LockTexture( tOldImage, &rect, &pixels, &pitch);
+			tOldImage = SDL_CreateTextureFromSurface( this->renderer, saveSurface);
+			if (!tOldImage) {
 				p = SDL_GetError();
-
-				for (int i = 0; i < 3240000; i++) {
-					char* pc = (char*
-						)pixels;
-					char c = pc[i];
-					if ( c != 0 )
-						printf("%d %d\n", i, c );
-				}
-//*/
-				SDL_FreeSurface(sOldImage);
 			}
+//*/
+			SDL_FreeSurface(sOldImage);
+
 		}
 	}
 	SDL_RenderPresent(renderer);
