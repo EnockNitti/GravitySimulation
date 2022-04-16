@@ -12,7 +12,7 @@ extern Game* game;
 
 Planet::Planet(double mass, Vector position, Vector velocity, SDL_Renderer* renderer, int iNr, double dL2Dist )
 {
-	this->radius = std::cbrt(mass / DENSITY / PI / 3);
+	this->radius = sqrt(cbrt(mass / DENSITY / PI / 3));
 	if (this->radius < 1) this->radius = 1;
 
 	this->acceleration = Vector();
@@ -61,17 +61,19 @@ void Planet::updateVelocity(std::vector<Planet*>& others)
 			continue;
 		}
 
-
-
-
 		//cant collide with itself
 		if (other == this || this->iNr >= 100 || other->iNr >= 100 ) continue;
 
 		Vector posV = other->position - this->position;
-		double distance = posV.Lenght();
-		Vector mag = posV / distance;
+		double len = posV.Lenght();
+		Vector mag = posV / len;
+
+		double distance = sqrt(pow(position.x - other->position.x, 2) + pow(position.y - other->position.y, 2));
+		if (distance < 0.25)
+			continue;
 
 #if 0
+
 		//collision
 		if (sqrt(pow((position.x + radius - other->position.x - other->radius), 2) + pow((position.y + radius - other->position.y - other->radius), 2)) < radius + other->radius)
 		{
@@ -82,15 +84,14 @@ void Planet::updateVelocity(std::vector<Planet*>& others)
 				//this->radius = std::cbrt(4 * mass / DENSITY / PI / 3);
 
 				others.erase(std::remove(others.begin(), others.end(), other), others.end());
-				return;
+				continue;
 			}
 			else
 			{
-				other->mass += this->mass;
-				other->velocity += this->velocity * this->mass / other->mass;
-
+				this->velocity += other->velocity * other->mass / this->mass;
+				this->mass += other->mass;
 				others.erase(std::remove(others.begin(), others.end(), this), others.end());
-				return;
+				continue;
 			}
 		}//*/
 #endif
@@ -176,7 +177,7 @@ void Planet::updateVelocity(std::vector<Planet*>& others)
 			dLastX = position.x;
 		}
 #endif
-		double force = this->mass * other->mass * G / pow(distance, 2);
+		double force = this->mass * other->mass * G / pow(len, 2);
 		this->acceleration += (mag * force / this->mass) * TIME_STEP;
 	}
 		this->velocity += this->acceleration;

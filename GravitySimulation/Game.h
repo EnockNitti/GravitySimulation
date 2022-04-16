@@ -3,6 +3,7 @@
 #include "SDL.h"
 #include "SDL_image.h"
 #include "Universe.h"
+#include "Planet.h"
 
 #include <iostream>
 
@@ -10,9 +11,16 @@
 #define WIDTH 900
 #define PI 3.14159
 #define DENSITY 1.0
+#if MANY 
+#define G (4.0)
+#else
 #define G (1.0 / 128)
+#endif
+
 #define MOUSE 100000.0
 #define pi2 ( PI * 2)
+
+
 
 
 class Game {
@@ -28,7 +36,6 @@ public:
 	void clean();
 	void handleEvents();
 	bool isRunning = false;
-//	SDL_Texture* texture;
 
 	bool running() { return isRunning; };
 

@@ -7,6 +7,14 @@
 Game::Game() {};
 Game::~Game() {};
 
+double nsign(double b, double a)
+{
+	a = -abs( a);
+	if( b < 0 )
+		a = abs(a);
+	return a;
+}
+
 void Game::init(const char* title, int xpos, int ypos, int width, int height, bool fullscreen)
 {
 	int flags = 0;
@@ -46,19 +54,31 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 	universe.addPlanet(new Planet(100000, Vector( 0, -400), Vector(-1, 0), renderer));
 	universe.addPlanet(new Planet(100000, Vector( 0, 400 ), Vector(1, 0), renderer));//*/
 
-/*	// Random planets
+#if MANY
+
+	// Random planets
+//#define	RAND_MAX 1000;
 	srand(time(NULL));
 	for (int i = 0; i < 25; i++)
 	{
-		universe.addPlanet(new Planet(10.0 + std::rand() % 991, Vector(std::rand() % width, std::rand() % height), Vector(0, 0), renderer));
+		int x = ( rand() % WIDTH - 450 ) / 2;
+		int y = ( rand() % HIGHT- 450 ) / 2;
+		double xv = (rand() - RAND_MAX / 2) / 50000.0;
+		double yv = (rand() - RAND_MAX / 2) / 50000.0;
+		xv = nsign(x, xv);
+		yv = nsign(y, yv);
+
+		universe.addPlanet(new Planet( rand() % 100 + 100,
+			Vector( x, y), Vector( xv, yv ), renderer));
 	}//*/
+	double d = ((rand() - 500.0) / 500.0);
+#endif
 
 	// Orbiting planets
 /*	universe.addPlanet(new Planet(100000, Vector( 0 , 0 ), Vector(0, 0 ), renderer));		//   "Sun"
 	universe.addPlanet(new Planet(1000, Vector(	0, 300 ), Vector( 0.75, 0 ), renderer, 1));
 	universe.addPlanet(new Planet(1000, Vector( 300 , -300 ), Vector( -0.25, 0.2), renderer, 0));
 	universe.addPlanet(new Planet(1000, Vector( 0, -300 ), Vector(-0.75, 0), renderer));//*/
-
 
 #if ELIPTIC
 
@@ -90,6 +110,34 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 
 #endif
 
+#if SYSTEM
+
+	double dSun = 100000.0;
+	double dPlanet = 100.0;
+	double O0 = 100;
+	double O1 = 200;
+	double O2 = 300;
+	double O3 = 400;
+
+	universe.addPlanet(new Planet(dSun, Vector(0, 0), Vector(0, 0), renderer));		//   "Sun"
+	
+	Vector Pos(0, O0);
+	Vector Vel(sqrt((G * ((dSun + dPlanet) / O0))), 0.0);
+	universe.addPlanet(new Planet(dPlanet, Pos, Vel, renderer, 1));
+
+	Pos = Vector( 0, O1 );
+	Vel = Vector(sqrt((G* ((dSun + dPlanet) / O1))), 0.0);
+	universe.addPlanet(new Planet(dPlanet, Pos, Vel, renderer, 2));
+
+	Pos = Vector(0, O2);
+	Vel = Vector(sqrt((G* ((dSun + dPlanet) / O2))), 0.0);
+	universe.addPlanet(new Planet(dPlanet, Pos, Vel, renderer, 3));
+
+	Pos = Vector(0, O3);
+	Vel = Vector(sqrt((G* ((dSun + dPlanet) / O3))), 0.0);
+	universe.addPlanet(new Planet(dPlanet, Pos, Vel, renderer, 4));
+
+#endif
 
 #if	LOGL2
 	double dSun = 1000000.0;
@@ -107,12 +155,12 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 	dL2Dist += 0.401793935;			// The fiddle factor needed for the L2 satellite to stay in place for at least 1.5 of a revolution..... :)
 	double speedL2 = speed * (z + dL2Dist) / z;
 	
+
 	// L2 satellite
 	universe.addPlanet(new Planet( dL2, Vector(0, z + dL2Dist), Vector(speedL2, 0), renderer, 4));//*/
 
 	// Theoretical postition for L2  ( red )
-	universe.addPlanet(new Planet( 0.00001, Vector(0, z + dL2Dist), Vector(0, 0), renderer, 101, dL2Dist ));//*/
-
+	universe.addPlanet(new Planet(0.00001, Vector(0, z + dL2Dist), Vector(0, 0), renderer, 101, dL2Dist));//*/
 #endif
 
 	// This correction is needed for "unsymmetrical" systems like earth-moon
@@ -131,76 +179,71 @@ extern SDL_Surface * saveScreenshotBMP( SDL_Window* SDLWindow, SDL_Renderer* SDL
 void Game::render()
 {
 	static int iCnt = 0;
-	const char* p;
 	static SDL_Texture* tOldImage = NULL;
 	SDL_Surface* sOldImage = NULL;
+	static int i = 0;
 
-	if (iCnt++ < 100 || true) {
+	for (;; ) {
 
-		SDL_RenderClear(renderer);
-
+		if (SDL_RenderClear(renderer) != 0)
+			break;
 		if (tOldImage) {
-			SDL_SetTextureBlendMode(tOldImage, SDL_BLENDMODE_BLEND);
-			p = SDL_GetError(); //*/
-			SDL_SetTextureAlphaMod(tOldImage, 255);
-			p = SDL_GetError();
-			SDL_RenderCopy(renderer, tOldImage, NULL, NULL);
-			p = SDL_GetError();
+			if( SDL_SetTextureBlendMode(tOldImage, SDL_BLENDMODE_BLEND) != 0 )
+				break;
+			if( SDL_SetTextureAlphaMod(tOldImage, 252) != 0 )
+			//		if( SDL_SetTextureAlphaMod(tOldImage, 255) != 0 )
+				break;
+			if( SDL_RenderCopy(renderer, tOldImage, NULL, NULL) != 0 )
+				break;
+			SDL_DestroyTexture(tOldImage);
 
 		}
 
-		// render all new stuff
+		// render all new new stuff
 		this->universe.render(this->renderer);
-
-		// Save an old image just for test
-		if (iCnt == 100) {
+#if 1
+		{
 			SDL_Surface* saveSurface = NULL;
 			SDL_Surface* infoSurface = NULL;
 
-			infoSurface = SDL_GetWindowSurface( window);
+			infoSurface = SDL_GetWindowSurface(window);
 			if (infoSurface == NULL) {
-				p = SDL_GetError();
-				return;
+				break;
 			}
 
 			int nBytes = infoSurface->w * infoSurface->h * infoSurface->format->BytesPerPixel;
 			unsigned char* pixels = new unsigned char[nBytes];
 			if (infoSurface == NULL) {
-				p = SDL_GetError();
+				break;
 			}
-#if 0
-			// Just to check that we got pixels
-			for (int i = 0; i < nBytes; i++) {
-				char* pc = (char*
-					)pixels;
-				char c = pc[i];
-				if (c != 0)
-					printf("%d %d\n", i, c);
-			}
-#endif
 
 			if (SDL_RenderReadPixels(renderer, &infoSurface->clip_rect, infoSurface->format->format,
-					pixels, infoSurface->w * infoSurface->format->BytesPerPixel) != 0) {
-				p = SDL_GetError();
+				pixels, infoSurface->w * infoSurface->format->BytesPerPixel) != 0) {
+				break;
 			}
-			
+
 			saveSurface = SDL_CreateRGBSurfaceFrom(pixels, infoSurface->w, infoSurface->h,
 				infoSurface->format->BitsPerPixel, infoSurface->w * infoSurface->format->BytesPerPixel, infoSurface->format->Rmask,
 				infoSurface->format->Gmask, infoSurface->format->Bmask, infoSurface->format->Amask);
 			if (saveSurface == NULL) {
-				p = SDL_GetError();
+				break;
 			}
 
-			tOldImage = SDL_CreateTextureFromSurface( this->renderer, saveSurface);
-			if (!tOldImage) {
-				p = SDL_GetError();
+			tOldImage = SDL_CreateTextureFromSurface(this->renderer, saveSurface);
+			if (!tOldImage ) {
+				break;
 			}
-//*/
+			//*/
+			delete[] pixels;
 			SDL_FreeSurface(sOldImage);
-
+			SDL_FreeSurface(infoSurface);
 		}
+#endif
+		SDL_RenderPresent(renderer);
+		return;				// Ok retun
 	}
-	SDL_RenderPresent(renderer);
+	printf( "%s\n", SDL_GetError());
+	exit(1);		// Error return
 }
 
 void Game::handleEvents()
