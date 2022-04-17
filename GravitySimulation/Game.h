@@ -36,11 +36,11 @@ public:
 	void clean();
 	void handleEvents();
 	bool isRunning = false;
-
 	bool running() { return isRunning; };
+	SDL_Renderer* renderer = NULL;
+	SDL_Renderer * Getrenderer(){ return renderer; };
 
 private:
 	SDL_Window* window = NULL;
-	SDL_Renderer* renderer = NULL;
 
 };

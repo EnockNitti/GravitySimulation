@@ -10,7 +10,7 @@
 extern Game* game;
 
 
-Planet::Planet(double mass, Vector position, Vector velocity, SDL_Renderer* renderer, int iNr, double dL2Dist )
+Planet::Planet(double mass, Vector position, Vector velocity, int iNr, double dL2Dist )
 {
 	this->radius = sqrt(cbrt(mass / DENSITY / PI / 3));
 	if (this->radius < 1) this->radius = 1;
@@ -32,7 +32,7 @@ Planet::Planet(double mass, Vector position, Vector velocity, SDL_Renderer* rend
 		tempSurface = IMG_Load("Marker.png");
 	q = SDL_GetError();
 
-	this->texture = SDL_CreateTextureFromSurface(renderer, tempSurface);
+	this->texture = SDL_CreateTextureFromSurface( game->renderer, tempSurface);
 	q = SDL_GetError();
 
 	SDL_FreeSurface(tempSurface);
@@ -68,11 +68,11 @@ void Planet::updateVelocity(std::vector<Planet*>& others)
 		double len = posV.Lenght();
 		Vector mag = posV / len;
 
-		double distance2 = ((position.x - other->position.x)* (position.x - other->position.x) + 
-			(position.y - other->position.y * (position.y - other->position.y)));
-//		double distance = sqrt(pow(position.x - other->position.x, 2) + pow(position.y - other->position.y, 2));
-		if (distance2 < 0.4)
-			continue;
+//		double distance2 = (( position.x - other->position.x ) * (position.x - other->position.x) + 
+//			(position.y - other->position.y * (position.y - other->position.y )));
+//		double distance2 = sqrt(pow(position.x - other->position.x, 2) + pow(position.y - other->position.y, 2));
+//		if (distance2 < 0.4)
+//			continue;
 
 #if 0
 
@@ -166,8 +166,8 @@ void Planet::updateVelocity(std::vector<Planet*>& others)
 			if( dLastX < 0 && position.x >= 0 )
 			{
 				unsigned int uiNow = SDL_GetTicks();
-				printf("L4X:%.9g,  L4Y:%.9g, Dist:%.9g N:%lu, dN:%lu, t:%d, dt:%d\n",
-					pL4->position.x, pL4->position.y, distance, luiIterations, luiIterations - luiLastIterations, uiNow, uiNow - uiLast);
+				printf("L4X:%.9g,  L4Y:%.9g, N:%lu, dN:%lu, t:%d, dt:%d\n",
+					pL4->position.x, pL4->position.y, luiIterations, luiIterations - luiLastIterations, uiNow, uiNow - uiLast);
 //				printf("Y:%.9g\n", position.y);
 				uiLast = uiNow;
 				luiLastIterations = luiIterations;
