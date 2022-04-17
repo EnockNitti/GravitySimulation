@@ -68,8 +68,10 @@ void Planet::updateVelocity(std::vector<Planet*>& others)
 		double len = posV.Lenght();
 		Vector mag = posV / len;
 
-		double distance = sqrt(pow(position.x - other->position.x, 2) + pow(position.y - other->position.y, 2));
-		if (distance < 0.25)
+		double distance2 = ((position.x - other->position.x)* (position.x - other->position.x) + 
+			(position.y - other->position.y * (position.y - other->position.y)));
+//		double distance = sqrt(pow(position.x - other->position.x, 2) + pow(position.y - other->position.y, 2));
+		if (distance2 < 0.4)
 			continue;
 
 #if 0
@@ -177,7 +179,8 @@ void Planet::updateVelocity(std::vector<Planet*>& others)
 			dLastX = position.x;
 		}
 #endif
-		double force = this->mass * other->mass * G / pow(len, 2);
+//		double force = this->mass * other->mass * G / pow(len, 2);
+		double force = this->mass * other->mass * G / ( len * len );
 		this->acceleration += (mag * force / this->mass) * TIME_STEP;
 	}
 		this->velocity += this->acceleration;

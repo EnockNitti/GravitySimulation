@@ -110,6 +110,53 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 
 #endif
 
+
+#if TWOPLANETS
+#if 1	// Very close
+	double dSun = 100000.0;
+	double dPlanet = 10.0;
+	double O0 = 100;
+	double O1 = 200;
+	double O2 = 300;
+	double O3 = 400;
+	double O4 = 500;
+
+	universe.addPlanet(new Planet(dSun, Vector(0, 0), Vector(0, 0), renderer));		//   "Sun"
+
+	Vector Pos(0, O3);
+	Vector Vel(sqrt((G * ((dSun + dPlanet) / O3))), 0.0);
+	universe.addPlanet(new Planet(dPlanet, Pos, Vel, renderer, 1));
+
+	Pos = Vector(0+12, O3);
+	Vel = Vector(sqrt((G* ((dSun + dPlanet) / O3))), 0.0);
+	universe.addPlanet(new Planet(dPlanet, Pos, Vel, renderer, 1));
+#else
+// an another variation
+	double dSun = 100000.0;
+	double dPlanet = 100.0;
+	double O0 = 100;
+	double O1 = 200;
+	double O2 = 300;
+	double O3 = 319;
+	double O4 = 500;
+
+	universe.addPlanet(new Planet(dSun, Vector(0, 0), Vector(0, 0), renderer));		//   "Sun"
+
+	Vector Pos( 0, O2);
+	Vector Vel(sqrt((G* ((dSun + dPlanet) / O2))), 0.0);
+	universe.addPlanet(new Planet(dPlanet, Pos, Vel, renderer, 1));
+
+	Pos = Vector( 0, O3);
+	Vel = Vector(sqrt((G * ((dSun + dPlanet) / O3))), 0.0);
+	universe.addPlanet(new Planet(dPlanet, Pos, Vel, renderer, 2));
+
+
+#endif
+#endif
+
+
+
+
 #if SYSTEM
 
 	double dSun = 100000.0;
@@ -118,6 +165,7 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 	double O1 = 200;
 	double O2 = 300;
 	double O3 = 400;
+	double O4 = 500;
 
 	universe.addPlanet(new Planet(dSun, Vector(0, 0), Vector(0, 0), renderer));		//   "Sun"
 	
@@ -134,8 +182,13 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 	universe.addPlanet(new Planet(dPlanet, Pos, Vel, renderer, 3));
 
 	Pos = Vector(0, O3);
-	Vel = Vector(sqrt((G* ((dSun + dPlanet) / O3))), 0.0);
+	Vel = Vector(sqrt((G * ((dSun + dPlanet) / O3))), 0.0);
 	universe.addPlanet(new Planet(dPlanet, Pos, Vel, renderer, 4));
+
+	// a rough planet :)
+	Pos = Vector(0, O4);
+	Vel = Vector(sqrt((G * ((dSun + dPlanet) / O3)) -1.0), -0.3);
+	universe.addPlanet(new Planet(dPlanet, Pos, Vel, renderer, 5));
 
 #endif
 
