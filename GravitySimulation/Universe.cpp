@@ -1,8 +1,8 @@
-#include "Universe.h"
+#include "main.h"
 
 void Universe::addPlanet(Planet* planet)
 {
-	this->planets.push_back(planet);
+	planets.push_back(planet);
 }
 
 void Universe::update()
@@ -19,14 +19,6 @@ void Universe::update()
 
 }
 
-// Render all planets
-void Universe::render(SDL_Renderer* renderer)
-{
-	for (auto& planet : planets)
-	{
-		planet->render(renderer);
-	}
-}
 
 void Universe::MomentumAdjust()
 {

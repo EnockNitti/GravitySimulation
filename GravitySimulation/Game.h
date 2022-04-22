@@ -7,19 +7,6 @@
 
 #include <iostream>
 
-#define HIGHT 900
-#define WIDTH 900
-#define PI 3.14159
-#define DENSITY 1.0
-#if MANY 
-#define G (4.0)
-#else
-#define G (1.0 / 128)
-#endif
-
-#define MOUSE 100000.0
-#define pi2 ( PI * 2)
-
 
 
 
@@ -40,10 +27,10 @@ public:
 	void handleEvents();
 	bool isRunning = false;
 	bool running() { return isRunning; };
-	SDL_Renderer* renderer = NULL;
-	SDL_Renderer * Getrenderer(){ return renderer; };
+//	SDL_Renderer* renderer = NULL;
+//	SDL_Renderer * Getrenderer(){ return renderer; };
 
 private:
-	SDL_Window* window = NULL;
+//	SDL_Window* window = NULL;
 
 };

@@ -1,3 +1,5 @@
+#include "main.h"
+
 #include "SDL.h"
 #include "Game.h"
 #include <Windows.h>
@@ -14,7 +16,8 @@
  Just modified code from GitHub/Feeeeddmmmeee
 */
 
-Game* game = nullptr;
+
+Game* game = NULL;
 long unsigned int luiIterations = 0;;
 SDL_Renderer* renderer = NULL;
 SDL_Window* window = NULL;
@@ -23,8 +26,6 @@ SDL_Window* window = NULL;
 
 int main(int argc, char* argv[])
 {
-	const int FPS = 60;
-	const int frameDelay = 1000 / FPS;
 	Uint32 uiNow;
 	Uint32 uiTimeStart = 0;
 	Uint32 luiTimeStart = 0;
@@ -33,6 +34,7 @@ int main(int argc, char* argv[])
 	game->init("Gravity Simulation", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WIDTH, HIGHT, false);
 
 	//ShowWindow(GetConsoleWindow(), SW_HIDE);
+//	::Init()
 
 	while (game->running())
 	{
@@ -42,10 +44,10 @@ int main(int argc, char* argv[])
 		game->handleEvents();
 		game->update();
 
-		if (uiNow >= uiTimeStart + frameDelay)
+		if (uiNow >= uiTimeStart + FRAMEDELAY)
 		{
-			uiTimeStart = uiNow + frameDelay;
-			game->render();
+			uiTimeStart = uiNow + FRAMEDELAY;
+//			game->render();
 		}
 		if (uiNow >= luiTimeStart + 10000)
 		{

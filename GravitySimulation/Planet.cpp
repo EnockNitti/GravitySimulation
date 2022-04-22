@@ -25,7 +25,7 @@ Planet::Planet(double mass, Vector position, Vector velocity, int iNr, double dL
 		tempSurface = IMG_Load("Marker.png");
 	q = SDL_GetError();
 
-	this->texture = SDL_CreateTextureFromSurface( game->renderer, tempSurface);
+	this->texture = SDL_CreateTextureFromSurface( renderer, tempSurface);
 	q = SDL_GetError();
 
 	SDL_FreeSurface(tempSurface);
@@ -198,12 +198,16 @@ void Planet::updatePosition()
 }
 
 // Render one planet
-void Planet::render(SDL_Renderer* renderer)
+void Planet::render()
 {
-	this->destRect.w = this->destRect.h = (int)this->radius * 2;
+	destRect.w = destRect.h = (int)radius * 2;
 
-	this->destRect.x = (int)(this->position.x - this->radius + WIDTH / 2);
-	this->destRect.y = HIGHT - (int)( this->position.y + this->radius + HIGHT / 2 );			// Y upp
+	destRect.x = (int)(position.x - radius + WIDTH / 2);
+	destRect.y = HIGHT - (int)( position.y + radius + HIGHT / 2 );			// Y upp
 
-	SDL_RenderCopy(renderer, this->texture, 0, &destRect);
+	if (SDL_RenderCopy(renderer, texture, 0, &destRect) != 0)
+	{
+		printf("%s\n", SDL_GetError());
+		exit(1);		// Error return
+	}
 }

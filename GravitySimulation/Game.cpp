@@ -35,6 +35,17 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 			SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 			std::cout << "Renderer Created!" << std::endl;
 		}
+		else
+			printf("%s\n", SDL_GetError());
+
+/*
+		renderer = SDL_CreateRenderer(window, -1, 0);
+		if (renderer)
+		{
+			SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+			std::cout << "Renderer Created!" << std::endl;
+		}
+*/
 
 
 //		SDL_Surface* tempSurface;
@@ -64,8 +75,7 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 		xv = nsign(x, xv);
 		yv = nsign(y, yv);
 
-		universe.addPlanet(new Planet( rand() % 100 + 100,
-			Vector( x, y), Vector( xv, yv )));
+		universe.addPlanet(new Planet( rand() % 100 + 100,	Vector( x, y), Vector( xv, yv ), i ));
 	}//*/
 	double d = ((rand() - 500.0) / 500.0);
 #endif
@@ -214,6 +224,9 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 
 	// This correction is needed for "unsymmetrical" systems like earth-moon
 	universe.MomentumAdjust();
+
+	InitDisplayThread();
+
 }
 
 void Game::update()
@@ -221,6 +234,7 @@ void Game::update()
 	this->universe.update();
 }
 
+#if 0
 // Clear "universe", Render planets, present new universe
 void Game::render()
 {
@@ -291,6 +305,8 @@ void Game::render()
 	printf( "%s\n", SDL_GetError());
 	exit(1);		// Error return
 }
+
+#endif
 
 void Game::handleEvents()
 {

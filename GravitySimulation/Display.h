@@ -8,7 +8,7 @@ public:
 	~Display() {};
 
 
-	void Init();
+//	void Init();
 	int  fRender();
 
 

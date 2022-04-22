@@ -14,7 +14,8 @@ static int fRThread(void* pv)
 
 //**********************************
 
-void Display::Init()
+//void Display::Init()
+void InitDisplayThread()
 {
 	pRThread = SDL_CreateThread( fRThread, "RThread", (void*)NULL);
 	if (!pRThread) {
@@ -26,7 +27,7 @@ void Display::Init()
 //**********************************
 
 #if 1
-// Clear "universe", Render planets, present new universe
+// Create renderer, Render planets, present new universe
 int Display::fRender()
 {
 #if 1
@@ -35,11 +36,21 @@ int Display::fRender()
 	static SDL_Texture* tOldImage = NULL;
 	SDL_Surface* sOldImage = NULL;
 	static int i = 0;
-
+/*
+	renderer = SDL_CreateRenderer(window, -1, 0);
+	if (renderer)
+	{
+		SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+		std::cout << "Renderer Created!" << std::endl;
+	}
+	else
+		printf("%s\n", SDL_GetError());
+*/
 	for (;; ) {
 
 		if (SDL_RenderClear(renderer) != 0)
 			break;
+#if TRACKS
 		if (tOldImage) {
 			if (SDL_SetTextureBlendMode(tOldImage, SDL_BLENDMODE_BLEND) != 0)
 				break;
@@ -51,11 +62,15 @@ int Display::fRender()
 			SDL_DestroyTexture(tOldImage);
 
 		}
+#endif
 
+		SDL_Delay( FRAMEDELAY );
 		// render all new new stuff
-//		this->universe.render( renderer );
-//		DisplayPlanets();
-#if 1
+		for (auto& planet : game->universe.planets) {
+			planet->render();
+		}
+
+#if TRACKS
 		{
 			SDL_Surface* saveSurface = NULL;
 			SDL_Surface* infoSurface = NULL;
@@ -94,7 +109,6 @@ int Display::fRender()
 		}
 #endif
 		SDL_RenderPresent(renderer);
-		return 0;				// Ok retun
 	}
 	printf("%s\n", SDL_GetError());
 	#endif

@@ -1,19 +1,5 @@
 #pragma once
 
-#include "Vector.h"
-#include <vector>
-#include "SDL_image.h"
-
-#define TIME_STEP ( 1.0 / 0x10000000 )
-
-#define ELIPTIC false
-#define LOGL4 false
-#define LOGL2 false
-#define MANY true
-#define SYSTEM false
-#define TWOPLANETS false
-
-
 struct Planet
 {
 	double radius, mass;
@@ -29,5 +15,5 @@ struct Planet
 	void updateVelocity(std::vector<Planet*>& others);
 	void updatePosition();
 	
-	void render(SDL_Renderer* renderer);
+	void render();
 };
