@@ -1,8 +1,4 @@
-#include "Game.h"
-
-#include <time.h>
-#include <Windows.h>
-#include <cmath>
+#include "main.h"
 
 Game::Game() {};
 Game::~Game() {};
@@ -58,7 +54,7 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 
 	// Random planets
 //#define	RAND_MAX 1000;
-	srand(time(NULL));
+	srand(  (unsigned int)time(NULL) );
 	for (int i = 0; i < 25; i++)
 	{
 		int x = ( rand() % WIDTH - 450 ) / 2;
@@ -224,9 +220,6 @@ void Game::update()
 {
 	this->universe.update();
 }
-
-extern SDL_Surface * saveScreenshotBMP( SDL_Window* SDLWindow, SDL_Renderer* SDLRenderer);
-
 
 // Clear "universe", Render planets, present new universe
 void Game::render()

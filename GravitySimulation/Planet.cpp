@@ -1,11 +1,4 @@
-#include "Planet.h"
-#include "Game.h"
-
-#include "SDL_image.h"
-#include "SDL.h"
-
-#include <Windows.h>
-
+#include "main.h"
 
 extern Game* game;
 
@@ -41,7 +34,6 @@ Planet::Planet(double mass, Vector position, Vector velocity, int iNr, double dL
 void Planet::updateVelocity(std::vector<Planet*>& others)
 {
 	static long unsigned int luiLastIterations = 0;
-	static long unsigned int luiIterations = 0;
 
 	this->acceleration = Vector();
 
@@ -68,8 +60,8 @@ void Planet::updateVelocity(std::vector<Planet*>& others)
 		double len = posV.Lenght();
 		Vector mag = posV / len;
 
-//		double distance2 = (( position.x - other->position.x ) * (position.x - other->position.x) + 
-//			(position.y - other->position.y * (position.y - other->position.y )));
+		double distance2 = (( position.x - other->position.x ) * (position.x - other->position.x) + 
+			(position.y - other->position.y * (position.y - other->position.y )));
 //		double distance2 = sqrt(pow(position.x - other->position.x, 2) + pow(position.y - other->position.y, 2));
 //		if (distance2 < 0.4)
 //			continue;
@@ -104,13 +96,12 @@ void Planet::updateVelocity(std::vector<Planet*>& others)
 		static unsigned int uiLast = 0;
 
 		if (iNr == 1 && other->iNr == 0 ) {				// if log planet ( going CV )
-			static long unsigned int luiIterations = 0;
+			luiIterations++;
 			static double  dLastDistance = 1e10;
 			static double  dLastLastDistance = 0;
 			unsigned int uiNow = SDL_GetTicks();
-			luiIterations++;
 
-			if (distance < dLastDistance && dLastDistance > dLastLastDistance)
+			if (distance2 < dLastDistance && dLastDistance > dLastLastDistance)
 			{
 				printf("g   X:%.9g,  Y:%.9g, N:%lu, dN:%lu, t:%d, dt:%d\n",
 					posV.x, posV.y, luiIterations, luiIterations - luiLastIterations, uiNow, uiNow - uiLast);
@@ -118,7 +109,7 @@ void Planet::updateVelocity(std::vector<Planet*>& others)
 				luiLastIterations = luiIterations;
 			}
 			dLastLastDistance = dLastDistance;
-			dLastDistance = distance;
+			dLastDistance = distance2;
 		}
 #endif
 
@@ -179,11 +170,26 @@ void Planet::updateVelocity(std::vector<Planet*>& others)
 			dLastX = position.x;
 		}
 #endif
+
+		static double dForceMax = 0;
 //		double force = this->mass * other->mass * G / pow(len, 2);
 		double force = this->mass * other->mass * G / ( len * len );
+#if 0
+		if (force / 2.0 > dForceMax)
+//			if (force > dForceMax)
+		{
+			dForceMax = force;
+			printf("F:%.9g\n", dForceMax);
+		}
+#endif
+		if (force > 1000000.0)
+			force = 1000000.0;
 		this->acceleration += (mag * force / this->mass) * TIME_STEP;
 	}
 		this->velocity += this->acceleration;
+
+		luiIterations++;
+
 }
 
 void Planet::updatePosition()

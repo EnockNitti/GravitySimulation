@@ -15,6 +15,11 @@
 */
 
 Game* game = nullptr;
+long unsigned int luiIterations = 0;;
+SDL_Renderer* renderer = NULL;
+SDL_Window* window = NULL;
+
+
 
 int main(int argc, char* argv[])
 {
@@ -22,6 +27,7 @@ int main(int argc, char* argv[])
 	const int frameDelay = 1000 / FPS;
 	Uint32 uiNow;
 	Uint32 uiTimeStart = 0;
+	Uint32 luiTimeStart = 0;
 
 	game = new Game();
 	game->init("Gravity Simulation", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WIDTH, HIGHT, false);
@@ -36,13 +42,17 @@ int main(int argc, char* argv[])
 		game->handleEvents();
 		game->update();
 
-//		exit(7);
-
 		if (uiNow >= uiTimeStart + frameDelay)
 		{
 			uiTimeStart = uiNow + frameDelay;
 			game->render();
 		}
+		if (uiNow >= luiTimeStart + 10000)
+		{
+			printf(":%ld\n", luiIterations );
+			luiTimeStart += 10000;
+		}
+
 	}
 
 	//ShowWindow(GetConsoleWindow(), SW_RESTORE);
