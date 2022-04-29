@@ -191,11 +191,11 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 	Vel = Vector(sqrt((G * ((dSun + dPlanet) / O3))), 0.0);
 	universe.addPlanet(new Planet(dPlanet, Pos, Vel , 4));
 
-	// a rough planet :)
+/*	// a rough planet :)
 	Pos = Vector(0, O4);
 	Vel = Vector(sqrt((G * ((dSun + dPlanet) / O3)) -1.0), -0.3);
 	universe.addPlanet(new Planet(dPlanet, Pos, Vel , 5));
-
+*/
 #endif
 
 #if	LOGL2
@@ -222,7 +222,7 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 	universe.addPlanet(new Planet(0.00001, Vector(0, z + dL2Dist), Vector(0, 0) , 101, dL2Dist));//*/
 #endif
 
-	// This correction is needed for "unsymmetrical" systems like earth-moon
+	// This correction is needed for "unsymmetrical" systems like sun-earth
 	universe.MomentumAdjust();
 
 	InitDisplayThread();
@@ -234,79 +234,6 @@ void Game::update()
 	this->universe.update();
 }
 
-#if 0
-// Clear "universe", Render planets, present new universe
-void Game::render()
-{
-	static int iCnt = 0;
-	static SDL_Texture* tOldImage = NULL;
-	SDL_Surface* sOldImage = NULL;
-	static int i = 0;
-
-	for (;; ) {
-
-		if (SDL_RenderClear(renderer) != 0)
-			break;
-		if (tOldImage) {
-			if( SDL_SetTextureBlendMode(tOldImage, SDL_BLENDMODE_BLEND) != 0 )
-				break;
-			if( SDL_SetTextureAlphaMod(tOldImage, 252) != 0 )
-			//		if( SDL_SetTextureAlphaMod(tOldImage, 255) != 0 )
-				break;
-			if( SDL_RenderCopy(renderer, tOldImage, NULL, NULL) != 0 )
-				break;
-			SDL_DestroyTexture(tOldImage);
-
-		}
-
-		// render all new new stuff
-		this->universe.render(this->renderer);
-#if 1
-		{
-			SDL_Surface* saveSurface = NULL;
-			SDL_Surface* infoSurface = NULL;
-
-			infoSurface = SDL_GetWindowSurface(window);
-			if (infoSurface == NULL) {
-				break;
-			}
-
-			int nBytes = infoSurface->w * infoSurface->h * infoSurface->format->BytesPerPixel;
-			unsigned char* pixels = new unsigned char[nBytes];
-			if (infoSurface == NULL) {
-				break;
-			}
-
-			if (SDL_RenderReadPixels(renderer, &infoSurface->clip_rect, infoSurface->format->format,
-				pixels, infoSurface->w * infoSurface->format->BytesPerPixel) != 0) {
-				break;
-			}
-
-			saveSurface = SDL_CreateRGBSurfaceFrom(pixels, infoSurface->w, infoSurface->h,
-				infoSurface->format->BitsPerPixel, infoSurface->w * infoSurface->format->BytesPerPixel, infoSurface->format->Rmask,
-				infoSurface->format->Gmask, infoSurface->format->Bmask, infoSurface->format->Amask);
-			if (saveSurface == NULL) {
-				break;
-			}
-
-			tOldImage = SDL_CreateTextureFromSurface(this->renderer, saveSurface);
-			if (!tOldImage ) {
-				break;
-			}
-			//*/
-			delete[] pixels;
-			SDL_FreeSurface(sOldImage);
-			SDL_FreeSurface(infoSurface);
-		}
-#endif
-		SDL_RenderPresent(renderer);
-		return;				// Ok retun
-	}
-	printf( "%s\n", SDL_GetError());
-	exit(1);		// Error return
-}
-
-#endif
 
 void Game::handleEvents()
 {

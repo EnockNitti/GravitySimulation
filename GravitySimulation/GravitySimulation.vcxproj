@@ -132,7 +132,14 @@
       <ConformanceMode>true</ConformanceMode>
       <DisableSpecificWarnings>26495;26812;26451;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <EnableParallelCodeGeneration>true</EnableParallelCodeGeneration>
+      <AdditionalOptions>/Qpar-report:2 %(AdditionalOptions)</AdditionalOptions>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <EnableFiberSafeOptimizations>true</EnableFiberSafeOptimizations>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <ControlFlowGuard>false</ControlFlowGuard>
+      <FloatingPointModel>Fast</FloatingPointModel>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -150,7 +157,14 @@
       <ConformanceMode>true</ConformanceMode>
       <DisableSpecificWarnings>26495;26812;26451;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <EnableParallelCodeGeneration>true</EnableParallelCodeGeneration>
+      <AdditionalOptions>/Qpar-report:2 %(AdditionalOptions)</AdditionalOptions>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <EnableFiberSafeOptimizations>true</EnableFiberSafeOptimizations>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <ControlFlowGuard>false</ControlFlowGuard>
+      <FloatingPointModel>Fast</FloatingPointModel>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

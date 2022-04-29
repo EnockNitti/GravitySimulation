@@ -27,7 +27,7 @@ void InitDisplayThread()
 //**********************************
 
 #if 1
-// Create renderer, Render planets, present new universe
+// Render planets, present new universe
 int Display::fRender()
 {
 #if 1
@@ -36,16 +36,6 @@ int Display::fRender()
 	static SDL_Texture* tOldImage = NULL;
 	SDL_Surface* sOldImage = NULL;
 	static int i = 0;
-/*
-	renderer = SDL_CreateRenderer(window, -1, 0);
-	if (renderer)
-	{
-		SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-		std::cout << "Renderer Created!" << std::endl;
-	}
-	else
-		printf("%s\n", SDL_GetError());
-*/
 	for (;; ) {
 
 		if (SDL_RenderClear(renderer) != 0)
@@ -55,7 +45,6 @@ int Display::fRender()
 			if (SDL_SetTextureBlendMode(tOldImage, SDL_BLENDMODE_BLEND) != 0)
 				break;
 			if (SDL_SetTextureAlphaMod(tOldImage, 252) != 0)
-				//		if( SDL_SetTextureAlphaMod(tOldImage, 255) != 0 )
 				break;
 			if (SDL_RenderCopy(renderer, tOldImage, NULL, NULL) != 0)
 				break;

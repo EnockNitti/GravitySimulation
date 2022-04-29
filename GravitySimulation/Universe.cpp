@@ -16,7 +16,6 @@ void Universe::update()
 	{
 		planet->updatePosition();
 	}
-
 }
 
 

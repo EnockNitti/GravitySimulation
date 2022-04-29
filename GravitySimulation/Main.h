@@ -1,14 +1,19 @@
 #pragma once
 
 
-#define TIME_STEP ( 1.0 / 0x10000000 )
 
 #define ELIPTIC false
 #define LOGL4 false
 #define LOGL2 false
-#define MANY true
-#define SYSTEM false
+#define MANY false
+#define SYSTEM true
 #define TWOPLANETS false
+
+// Just for a test
+#define NPlanets 5
+
+
+
 
 #define TRACKS true
 
@@ -17,6 +22,9 @@
 #include <cmath>
 #include "Vector.h"
 #include <vector>
+#include <condition_variable>
+#include <thread>
+#include <chrono>
 #include "SDL.h"
 #include "SDL_image.h"
 #include "planet.h"
@@ -40,8 +48,10 @@ extern void InitDisplayThread();
 #define DENSITY 1.0
 #if MANY 
 #define G (4.0)
+#define TIME_STEP ( 1.0 / 0x10000000 )
 #else
 #define G (1.0 / 128)
+#define TIME_STEP ( 1.0 / 0x100000000 )
 #endif
 
 #define MOUSE 100000.0

@@ -2,6 +2,13 @@
 
 extern Game* game;
 
+std::condition_variable cv;
+std::mutex cv_m; // This mutex is used for three purposes:
+				 // 1) to synchronize accesses to i
+				 // 2) to synchronize accesses to std::cerr
+				 // 3) for the condition variable cv
+int i = NPlanets;
+
 
 Planet::Planet(double mass, Vector position, Vector velocity, int iNr, double dL2Dist )
 {
@@ -37,34 +44,42 @@ void Planet::updateVelocity(std::vector<Planet*>& others)
 
 	this->acceleration = Vector();
 
-	for (auto& other : others)
+	Universe u = game->universe;
+	Planet p = *u.planets.at(0);
+	// Sun is always "planet" index 0
+	if (this->iNr == 100 ) // If marker and a planet L4
 	{
-		if (this->iNr == 100 && other->iNr == 1) // If marker and a planet L4
-		{
-			this->position = other->position;
-			this->position.Rotate(pi2 * -60 / 360);
-			continue;
-		}
+		this->position = p.position;
+		this->position.Rotate(pi2 * -60 / 360);
+	}
 
-		if (this->iNr == 101 && other->iNr == 1) // If marker and a planet L2
-		{
-			this->position = other->position;
-			this->position.Extend(this->dL2Dist);
-			continue;
-		}
+	//Fel
+	else if (this->iNr == 101 ) // If marker and a planet L2
+	{
+		this->position = p.position;
+		this->position.Extend(this->dL2Dist);
+	}
+
+	else
+#pragma loop(hint_parallel(0))
+#pragma loop(ivdep)
+	for( int i = 0; i < NPlanets; i++ )
+//	for (auto& other : others)
+	{
+		Planet* /*__restrict*/ Other = others[i];
+		Planet* /*__restrict*/ This = this;
+
+//		Vector acceleration;
 
 		//cant collide with itself
-		if (other == this || this->iNr >= 100 || other->iNr >= 100 ) continue;
+//		if (other == this || this->iNr >= 100 || other->iNr >= 100 ) continue;
 
-		Vector posV = other->position - this->position;
+		Vector posV = Other->position - This->position;
 		double len = posV.Lenght();
 		Vector mag = posV / len;
 
-		double distance2 = (( position.x - other->position.x ) * (position.x - other->position.x) + 
-			(position.y - other->position.y * (position.y - other->position.y )));
-//		double distance2 = sqrt(pow(position.x - other->position.x, 2) + pow(position.y - other->position.y, 2));
-//		if (distance2 < 0.4)
-//			continue;
+		double distance2 = (( position.x - Other->position.x ) * (position.x - Other->position.x) + 
+			(position.y - Other->position.y * (position.y - Other->position.y )));
 
 #if 0
 
@@ -171,9 +186,8 @@ void Planet::updateVelocity(std::vector<Planet*>& others)
 		}
 #endif
 
-		static double dForceMax = 0;
-//		double force = this->mass * other->mass * G / pow(len, 2);
-		double force = this->mass * other->mass * G / ( len * len );
+//		static double dForceMax = 0;
+		double force = This->mass * Other->mass * G / ( len * len );
 #if 0
 		if (force / 2.0 > dForceMax)
 //			if (force > dForceMax)
@@ -182,14 +196,14 @@ void Planet::updateVelocity(std::vector<Planet*>& others)
 			printf("F:%.9g\n", dForceMax);
 		}
 #endif
-		if (force > 1000000.0)
-			force = 1000000.0;
-		this->acceleration += (mag * force / this->mass) * TIME_STEP;
+//		if (force > 1000000.0)
+//			force = 1000000.0;
+		This->acceleration += (mag * force / This->mass) * TIME_STEP;
+//		this->acceleration += (mag * force / this->mass) * TIME_STEP;
 	}
-		this->velocity += this->acceleration;
-
-		luiIterations++;
-
+//	this->acceleration += acceleration;
+	this->velocity += this->acceleration;
+	luiIterations++;
 }
 
 void Planet::updatePosition()
