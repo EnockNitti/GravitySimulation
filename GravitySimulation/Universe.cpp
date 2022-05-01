@@ -7,17 +7,16 @@ void Universe::addPlanet(Planet* planet)
 
 void Universe::update()
 {
-	for (auto& planet : planets)
+	for( int i = 0; i < iNPlanets; i++ )
 	{
-		planet->updateVelocity(planets);
+		planets[i]->updateVelocity( planets );
 	}
 
-	for (auto& planet : planets)
+	for (int i = 0; i < iNPlanets; i++)
 	{
-		planet->updatePosition();
+		planets[i]->updatePosition();
 	}
 }
-
 
 void Universe::MomentumAdjust()
 {

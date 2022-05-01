@@ -1,7 +1,7 @@
 
 #include "Main.h"
 
-// Run rendering in a separate thread at 60 fps
+// Run rendering in a separate thread at 60/100 fps
 
 SDL_Thread* pRThread;
 
@@ -36,6 +36,10 @@ int Display::fRender()
 	static SDL_Texture* tOldImage = NULL;
 	SDL_Surface* sOldImage = NULL;
 	static int i = 0;
+
+	Planet* pPlanet = game->universe.planets.at(1);  // For use with L2 and L4, always related to planet 1
+	Planet* pLagrange = game->universe.planets.back();  // For use with L2 and L4
+
 	for (;; ) {
 
 		if (SDL_RenderClear(renderer) != 0)
@@ -44,7 +48,7 @@ int Display::fRender()
 		if (tOldImage) {
 			if (SDL_SetTextureBlendMode(tOldImage, SDL_BLENDMODE_BLEND) != 0)
 				break;
-			if (SDL_SetTextureAlphaMod(tOldImage, 252) != 0)
+			if (SDL_SetTextureAlphaMod(tOldImage, TRACKLEN ) != 0)
 				break;
 			if (SDL_RenderCopy(renderer, tOldImage, NULL, NULL) != 0)
 				break;
@@ -52,12 +56,24 @@ int Display::fRender()
 
 		}
 #endif
-
 		SDL_Delay( FRAMEDELAY );
+
+		EnterCriticalSection(&CriticalSection);
+#if LOGL4
+		pLagrange->position = pPlanet->position;		// L4
+		pLagrange->position.Rotate(pi2 * -60 / 360);
+#endif
+#if LOGL2
+		pLagrange->position = pPlanet->position;
+		pLagrange->position.Extend(pLagrange->dL2Dist);
+#endif
+		LeaveCriticalSection(&CriticalSection);
+
 		// render all new new stuff
 		for (auto& planet : game->universe.planets) {
 			planet->render();
 		}
+//		LeaveCriticalSection(&CriticalSection);   // seems like it is not needed here   why ??
 
 #if TRACKS
 		{

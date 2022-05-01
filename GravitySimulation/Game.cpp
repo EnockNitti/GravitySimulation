@@ -38,20 +38,6 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 		else
 			printf("%s\n", SDL_GetError());
 
-/*
-		renderer = SDL_CreateRenderer(window, -1, 0);
-		if (renderer)
-		{
-			SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-			std::cout << "Renderer Created!" << std::endl;
-		}
-*/
-
-
-//		SDL_Surface* tempSurface;
-//		this->texture = SDL_CreateTextureFromSurface(renderer, tempSurface);
-
-
 		isRunning = true;
 	}
 
@@ -107,18 +93,22 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 	double speed = sqrt( G * ( (dSun + dPlanet1 ) / z ));
 
 	universe.addPlanet(new Planet(dSun, Vector(0, 0), Vector(0, 0) ));		//   "Sun"
-	universe.addPlanet(new Planet(dPlanet1, Vector(0, z), Vector(speed, 0) , 1 ));
+	universe.addPlanet(new Planet(dPlanet1, Vector(0, z), Vector(speed, 0) , 1 ));	// Planet
 	universe.addPlanet(new Planet(dL4, Vector(cos(30.0 / 360 * pi2) * z, sin(30.0 / 360 * pi2) * z),
-		Vector(sin(30.0 / 360 * pi2) * speed, -cos(30.0 / 360 * pi2) * speed) , 2));//*/
+		Vector(sin(30.0 / 360 * pi2) * speed, -cos(30.0 / 360 * pi2) * speed) , 2));//*/	// Satellite
+
+	iNPlanets = universe.planets.size();
+
 	// Marker
-	universe.addPlanet(new Planet(dL4, Vector(cos(30.0 / 360 * pi2) * z, sin(30.0 / 360 * pi2) * z), Vector( 0,0 ) , 100));//*/
+	universe.addPlanet(new Planet(dL4, Vector(cos(30.0 / 360 * pi2) * z, sin(30.0 / 360 * pi2) * z),
+		Vector( 0,0 ) , 100));//*/
 
 
 #endif
 
 
 #if TWOPLANETS
-#if 1	// Very close
+#if 0	// Very close
 	double dSun = 100000.0;
 	double dPlanet = 10.0;
 	double O0 = 100;
@@ -132,10 +122,13 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 	Vector Pos(0, O3);
 	Vector Vel(sqrt((G * ((dSun + dPlanet) / O3))), 0.0);
 	universe.addPlanet(new Planet(dPlanet, Pos, Vel , 1));
-
+/*
 	Pos = Vector(0+12, O3);
 	Vel = Vector(sqrt((G* ((dSun + dPlanet) / O3))), 0.0);
-	universe.addPlanet(new Planet(dPlanet, Pos, Vel , 1));
+	universe.addPlanet(new Planet(dPlanet, Pos, Vel , 2));
+*/
+	iNPlanets = universe.planets.size();
+
 #else
 // an another variation
 	double dSun = 100000.0;
@@ -156,6 +149,7 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 	Vel = Vector(sqrt((G * ((dSun + dPlanet) / O3))), 0.0);
 	universe.addPlanet(new Planet(dPlanet, Pos, Vel , 2));
 
+	iNPlanets = universe.planets.size();
 
 #endif
 #endif
@@ -180,11 +174,11 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 	universe.addPlanet(new Planet(dPlanet, Pos, Vel , 1));
 
 	Pos = Vector( 0, O1 );
-	Vel = Vector(sqrt((G* ((dSun + dPlanet) / O1))), 0.0);
+	Vel = Vector(sqrt((G * ((dSun + dPlanet) / O1))), 0.0);
 	universe.addPlanet(new Planet(dPlanet, Pos, Vel , 2));
 
 	Pos = Vector(0, O2);
-	Vel = Vector(sqrt((G* ((dSun + dPlanet) / O2))), 0.0);
+	Vel = Vector(sqrt((G * ((dSun + dPlanet) / O2))), 0.0);
 	universe.addPlanet(new Planet(dPlanet, Pos, Vel , 3));
 
 	Pos = Vector(0, O3);
@@ -196,6 +190,8 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 	Vel = Vector(sqrt((G * ((dSun + dPlanet) / O3)) -1.0), -0.3);
 	universe.addPlanet(new Planet(dPlanet, Pos, Vel , 5));
 */
+	iNPlanets = universe.planets.size();
+
 #endif
 
 #if	LOGL2
@@ -206,7 +202,7 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 	double z = 250;
 	double speed = sqrt(G * ((dSun + dPlanet1) / z));
 
-	universe.addPlanet(new Planet(dSun, Vector(0, 0), Vector(0, 0) ));		//   "Sun"
+	universe.addPlanet(new Planet(dSun, Vector(0, 0), Vector(0, 0), 0 ));		//   "Sun"
 	universe.addPlanet(new Planet(dPlanet1, Vector(0, z), Vector(speed, 0) , 1));
 
 	// Lagrange L2
@@ -216,9 +212,11 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 	
 
 	// L2 satellite
-	universe.addPlanet(new Planet( dL2, Vector(0, z + dL2Dist), Vector(speedL2, 0) , 4));//*/
+	universe.addPlanet(new Planet( dL2, Vector(0, z + dL2Dist), Vector(speedL2, 0) , 2));//*/
 
-	// Theoretical postition for L2  ( red )
+	iNPlanets = universe.planets.size();
+
+	// Theoretical(Marker) postition for L2  ( red )
 	universe.addPlanet(new Planet(0.00001, Vector(0, z + dL2Dist), Vector(0, 0) , 101, dL2Dist));//*/
 #endif
 
@@ -245,6 +243,10 @@ void Game::handleEvents()
 	switch (event.type)
 	{
 	case SDL_QUIT:
+		isRunning = false;
+		break;
+
+	case SDL_KEYDOWN:
 		isRunning = false;
 		break;
 

@@ -21,17 +21,19 @@ Game* game = NULL;
 long unsigned int luiIterations = 0;;
 SDL_Renderer* renderer = NULL;
 SDL_Window* window = NULL;
-
-
+CRITICAL_SECTION CriticalSection;
+int iNPlanets = 0;
 
 int main(int argc, char* argv[])
 {
 	Uint32 uiNow;
 	Uint32 uiTimeStart = 0;
 	Uint32 luiTimeStart = 0;
+	InitializeCriticalSection(&CriticalSection);
 
 	game = new Game();
 	game->init("Gravity Simulation", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WIDTH, HIGHT, false);
+
 
 	//ShowWindow(GetConsoleWindow(), SW_HIDE);
 //	::Init()

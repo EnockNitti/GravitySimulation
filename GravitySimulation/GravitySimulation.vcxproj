@@ -132,12 +132,12 @@
       <ConformanceMode>true</ConformanceMode>
       <DisableSpecificWarnings>26495;26812;26451;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <InlineFunctionExpansion>Default</InlineFunctionExpansion>
       <EnableParallelCodeGeneration>true</EnableParallelCodeGeneration>
       <AdditionalOptions>/Qpar-report:2 %(AdditionalOptions)</AdditionalOptions>
-      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
-      <EnableFiberSafeOptimizations>true</EnableFiberSafeOptimizations>
-      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
+      <EnableFiberSafeOptimizations>false</EnableFiberSafeOptimizations>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <ControlFlowGuard>false</ControlFlowGuard>
       <FloatingPointModel>Fast</FloatingPointModel>
     </ClCompile>
@@ -157,14 +157,16 @@
       <ConformanceMode>true</ConformanceMode>
       <DisableSpecificWarnings>26495;26812;26451;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
-      <EnableParallelCodeGeneration>true</EnableParallelCodeGeneration>
+      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <EnableParallelCodeGeneration>false</EnableParallelCodeGeneration>
       <AdditionalOptions>/Qpar-report:2 %(AdditionalOptions)</AdditionalOptions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <EnableFiberSafeOptimizations>true</EnableFiberSafeOptimizations>
-      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <ControlFlowGuard>false</ControlFlowGuard>
-      <FloatingPointModel>Fast</FloatingPointModel>
+      <FloatingPointModel>Precise</FloatingPointModel>
+      <Optimization>Full</Optimization>
+      <OmitFramePointers>false</OmitFramePointers>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -179,6 +181,7 @@
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Planet.cpp" />
+    <ClCompile Include="Source1.cpp" />
     <ClCompile Include="Universe.cpp" />
     <ClCompile Include="Vector.cpp" />
   </ItemGroup>

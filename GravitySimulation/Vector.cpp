@@ -48,8 +48,6 @@ Vector& Vector::Divide(const Vector& vec)
 // Rotate around origo
 Vector& Vector::Rotate(const double& Alpha)
 {
-	//	x_rotated = ((x - dx) * cos(angle)) - ((y - dy) * sin(angle)) + dx
-	//	y_rotated = ((x - dx) * sin(angle)) + ((y - dy) * cos(angle)) + dy
 	double x0 = x * cos(Alpha) - y * sin(Alpha);
 	y = x * sin(Alpha) + y * cos(Alpha);
 	x = x0;
