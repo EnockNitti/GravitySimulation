@@ -154,8 +154,24 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 #endif
 #endif
 
+#if SUNMOON
+	double dSun = 100000.0;
+	double dPlanet = 100.0;
+	double dMoon = 1;
 
+	universe.addPlanet(new Planet(dSun, Vector(0, 0), Vector(0, 0)));		//   "Sun"
 
+	Vector Pos(0, 300);
+	Vector Vel(sqrt((G* ((dSun + dPlanet) / 300 ))), 0.0);
+	universe.addPlanet(new Planet(dPlanet, Pos, Vel, 1));
+
+	Pos = Vector(0, 320);
+	Vel += Vector(sqrt((G * (( dPlanet+ dMoon) / 20 ))), 0.0);
+	universe.addPlanet(new Planet(dPlanet, Pos, Vel, 2));
+
+	iNPlanets = universe.planets.size();
+
+#endif
 
 #if SYSTEM
 

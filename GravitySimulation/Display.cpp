@@ -69,7 +69,7 @@ int Display::fRender()
 #endif
 		LeaveCriticalSection(&CriticalSection);
 
-		// render all new new stuff
+		// render all new stuff
 		for (auto& planet : game->universe.planets) {
 			planet->render();
 		}

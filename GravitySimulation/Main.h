@@ -2,10 +2,11 @@
 
 #define ELIPTIC false
 #define LOGL4 false
-#define LOGL2 false
+#define LOGL2 true
 #define MANY false
 #define SYSTEM false
-#define TWOPLANETS true
+#define TWOPLANETS false
+#define SUNMOON false
 
 #define TRACKS true
 #define TRACKLEN 252
@@ -54,7 +55,7 @@ extern int iNPlanets;
 
 #else
 #define G (1.0 / 128)
-#define TIME_STEP ( 1.0 / 0x10000000 )
+#define TIME_STEP ( 1.0 / 0x100000000 )
 
 #endif
 

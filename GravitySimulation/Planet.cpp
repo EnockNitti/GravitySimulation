@@ -35,17 +35,20 @@ void Planet::updateVelocity(std::vector<Planet*>& others)
 {
 	static long unsigned int luiLastIterations = 0;
 
-	this->acceleration = Vector();
+//	this->acceleration = Vector();
+	Vector acceleration;
 
 	for (int i = 0; i < iNPlanets; i++)
 	{
-		if (this->iNr >= 100) continue;		// Marker is uppdated in Display::fRender
 		Planet* other = others[i];
 
 		//don't compute to itself
 		if (other == this ) continue;
 
-		Vector posV = other->position - this->position;
+		Vector posV;
+		posV.x = other->position.x - this->position.x;
+		posV.y = other->position.y - this->position.y;
+//		Vector posV = other->position - this->position;		// bug when use inline( release )
 //		Had problems with inlining here /Ob2. 
 //		printf("%g %g %i %i\n", posV.x, posV.y, this->iNr, other->iNr);
 //		printf("%g %g %g %g\n", this->position.x, this->position.y, other->position.x, other->position.y);
@@ -56,10 +59,11 @@ void Planet::updateVelocity(std::vector<Planet*>& others)
 		double distance = sqrt( distance2);
 		Vector mag = posV / distance;
 
-		this->acceleration += mag * other->mass * G / distance2 * TIME_STEP;
+//		this->acceleration += mag * other->mass * G / distance2 * TIME_STEP;
+		acceleration += mag * other->mass * G / distance2 * TIME_STEP;
 	}
 
-	this->velocity += this->acceleration;
+	this->velocity += acceleration;
 	luiIterations++;
 }
 
