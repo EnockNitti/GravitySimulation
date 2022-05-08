@@ -258,7 +258,7 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 	// Lagrange L2
 
 	double dL2Dist = z * std::cbrt(dPlanet1 / ( 3 * ( dSun + dPlanet1 )));		// First aprox
-	dL2Dist += 0.397667215;			// The fiddle factor needed for the L2 satellite to stay in place for at least for a revolution..... :)
+	dL2Dist += 0.397667211;			// The fiddle factor needed for the L2 satellite to stay in place for at least for a revolution..... :)
 	double speedL2 = speed * (z + dL2Dist) / z;
 	
 
