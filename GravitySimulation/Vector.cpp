@@ -1,6 +1,9 @@
 #include "Vector.h"
 #include "math.h"
 
+// Note: These functions are "self destructing" that is, the results are 
+// returned in the object itself
+
 Vector::Vector()
 {
 	x = 0;

@@ -60,12 +60,16 @@ int Display::fRender()
 
 		EnterCriticalSection(&CriticalSection);
 #if LOGL4
-		pLagrange->position = pPlanet->position;		// L4
-		pLagrange->position.Rotate(pi2 * -60 / 360);
+		if (pLagrange->iNr >= 100) {
+			pLagrange->position = pPlanet->position;		// L4
+			pLagrange->position.Rotate(pi2 * -60 / 360);
+		}
 #endif
 #if LOGL2
-		pLagrange->position = pPlanet->position;
-		pLagrange->position.Extend(pLagrange->dL2Dist);
+		if (pLagrange->iNr >= 100) {
+			pLagrange->position = pPlanet->position;
+			pLagrange->position.Extend(pLagrange->dL2Dist);
+		}
 #endif
 		LeaveCriticalSection(&CriticalSection);
 

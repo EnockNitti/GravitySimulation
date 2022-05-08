@@ -31,39 +31,96 @@ Planet::Planet(double mass, Vector position, Vector velocity, int iNr, double dL
 	SDL_FreeSurface(tempSurface);
 }
 
-void Planet::updateVelocity(std::vector<Planet*>& others)
+static double dMaxAcceleration = 0;
+
+void Planet::updateVelocityInit(std::vector<Planet*>& Planets)
 {
-	static long unsigned int luiLastIterations = 0;
-
-//	this->acceleration = Vector();
-	Vector acceleration;
-
 	for (int i = 0; i < iNPlanets; i++)
 	{
-		Planet* other = others[i];
+		Planets[i]->acceleration.Zero();
+	}
+}
 
-		//don't compute to itself
-		if (other == this ) continue;
+#define MAXACC 1e-7
+
+#if 0
+
+void Planet::updateVelocityFirst(std::vector<Planet*>& others)
+{
+	Vector acceleration;
+
+	for (int i = 1; i < iNPlanets; i++)
+	{
+		Planet* other = others[i];
+		other->acceleration.Zero();
 
 		Vector posV;
 		posV.x = other->position.x - this->position.x;
 		posV.y = other->position.y - this->position.y;
-//		Vector posV = other->position - this->position;		// bug when use inline( release )
-//		Had problems with inlining here /Ob2. 
-//		printf("%g %g %i %i\n", posV.x, posV.y, this->iNr, other->iNr);
-//		printf("%g %g %g %g\n", this->position.x, this->position.y, other->position.x, other->position.y);
 
 		double distance2 = ((position.x - other->position.x) * (position.x - other->position.x) +
-			(position.y - other->position.y ) * (position.y - other->position.y ));
+			(position.y - other->position.y) * (position.y - other->position.y));
 
-		double distance = sqrt( distance2);
+		double distance = sqrt(distance2);
 		Vector mag = posV / distance;
+		Vector mag2 = mag;
 
-//		this->acceleration += mag * other->mass * G / distance2 * TIME_STEP;
-		acceleration += mag * other->mass * G / distance2 * TIME_STEP;
+		acceleration = mag * other->mass * G / distance2 * TIME_STEP;
+		other->acceleration -= ( mag2 * this->mass * G / distance2 * TIME_STEP );
+//		printf(" ");
 	}
 
+/*
+	if (acceleration.x > dMaxAcceleration)
+	{
+		dMaxAcceleration = acceleration.x;
+		printf("%g\n", dMaxAcceleration);
+
+	}
+	if (acceleration.y > dMaxAcceleration)
+	{
+		dMaxAcceleration = acceleration.y;
+		printf("%g\n", dMaxAcceleration);
+	}
+*/
+	if (acceleration.x > MAXACC) acceleration.x = MAXACC;
+	if (acceleration.y > MAXACC) acceleration.y = MAXACC;
+	if (acceleration.x < -MAXACC) acceleration.x = -MAXACC;
+	if (acceleration.y < -MAXACC) acceleration.y = -MAXACC;
+
 	this->velocity += acceleration;
+	luiIterations++;
+}
+#endif
+
+void Planet::updateVelocityOthers(std::vector<Planet*>& others, int iPNr )
+{
+	for (int i = iPNr; i < iNPlanets-1; i++)
+	{
+		Planet* other = others[ i+1 ];
+
+		Vector posV;
+		posV.x = other->position.x - this->position.x;
+		posV.y = other->position.y - this->position.y;
+
+		double distance2 = ((position.x - other->position.x) * (position.x - other->position.x) +
+			(position.y - other->position.y) * (position.y - other->position.y));
+
+		double distance = sqrt(distance2);
+		Vector mag = posV / distance;
+		Vector mag2 = mag;
+		acceleration += mag * other->mass * G / distance2 * TIME_STEP;
+		other->acceleration -= mag2 * this->mass * G / distance2 * TIME_STEP;
+		if (acceleration.x > MAXACC) acceleration.x = MAXACC;
+	}
+
+	if (acceleration.x > MAXACC) acceleration.x = MAXACC;
+	if (acceleration.y > MAXACC) acceleration.y = MAXACC;
+	if (acceleration.x < -MAXACC) acceleration.x = -MAXACC;
+	if (acceleration.y < -MAXACC) acceleration.y = -MAXACC;
+
+	this->velocity += acceleration;
+
 	luiIterations++;
 }
 

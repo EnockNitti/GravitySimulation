@@ -7,9 +7,24 @@ void Universe::addPlanet(Planet* planet)
 
 void Universe::update()
 {
-	for( int i = 0; i < iNPlanets; i++ )
+//	planets[0]->updateVelocityFirst(planets);
+	planets[0]->updateVelocityInit(planets);
+
+	for (int i = 0; i < iNPlanets; i++)
 	{
-		planets[i]->updateVelocity( planets );
+		planets[i]->updateVelocityOthers(planets, i);
+	}
+
+	static double dHighSpeed = 0;
+	static int iPlanet = -1;
+	for (int i = 0; i < iNPlanets; i++)
+	{
+		double dSpeed = sqrt(planets[i]->velocity.x * planets[i]->velocity.x + planets[i]->velocity.y * planets[i]->velocity.y);
+		if (dSpeed * 0.99 > dHighSpeed) {
+			dHighSpeed = dSpeed;
+			iPlanet = i;
+			printf("%d %g\n", iPlanet, dHighSpeed);
+		}
 	}
 
 	for (int i = 0; i < iNPlanets; i++)
@@ -26,13 +41,14 @@ void Universe::MomentumAdjust()
 
 	for (auto& planet : planets)
 	{
-		TotMomentum += planet->Momentum;
-		dTotalMass += planet->mass;
+		TotMomentum += planet->Momentum;		// V * m
+		dTotalMass += planet->mass;				// m
 	}
 
 	for (auto& planet : planets) {
-		dMyMassQ = planet->mass / dTotalMass;
-		Vector VelocityAdjust = TotMomentum / (dMyMassQ * dTotalMass);
+		dMyMassQ = planet->mass / dTotalMass;			
+		Vector TempMomentum = TotMomentum;			// "#¤%& :(			V * m
+		Vector VelocityAdjust = TempMomentum * dMyMassQ / dTotalMass;	//  V * m / m
 		planet->velocity -= VelocityAdjust;
 	}
 }

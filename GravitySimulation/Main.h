@@ -37,7 +37,7 @@ extern int iNPlanets;
 
 
 //#define FPS 60
-#define FPS 200
+#define FPS 100
 #define FRAMEDELAY ( 1000 / FPS )
 
 #define HIGHT 900
@@ -46,8 +46,8 @@ extern int iNPlanets;
 #define DENSITY 1.0
 
 #if MANY 
-#define G (4.0)
-#define TIME_STEP ( 1.0 / 0x10000000 )
+#define G (1.0)
+#define TIME_STEP ( 1.0 / 0x1000000000 )
 
 #elif LOGL2
 #define G (1.0 / 128)
@@ -55,7 +55,7 @@ extern int iNPlanets;
 
 #else
 #define G (1.0 / 128)
-#define TIME_STEP ( 1.0 / 0x100000000 )
+#define TIME_STEP ( 1.0 / 0x10000000 )
 
 #endif
 

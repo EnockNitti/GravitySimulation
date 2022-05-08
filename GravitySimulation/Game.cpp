@@ -49,21 +49,53 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 
 #if MANY
 
+	double dSun = 100000.0;
+
+	universe.addPlanet(new Planet(dSun, Vector(0, 0), Vector(0, 0)));		//   "Sun"
+
+
 	// Random planets
 //#define	RAND_MAX 1000;
 	srand(  (unsigned int)time(NULL) );
-	for (int i = 0; i < 25; i++)
+	for (int i = 0; i < 10; i++)
 	{
-		int x = ( rand() % WIDTH - 450 ) / 2;
-		int y = ( rand() % HIGHT- 450 ) / 2;
-		double xv = (rand() - RAND_MAX / 2) / 50000.0;
-		double yv = (rand() - RAND_MAX / 2) / 50000.0;
-		xv = nsign(x, xv);
-		yv = nsign(y, yv);
+		int x = (rand() % WIDTH - 450) / 2;
+		int y = (rand() % HIGHT - 450) / 2;
+		double xv = (rand() - RAND_MAX / 2) / 500.0;
+		double yv = (rand() - RAND_MAX / 2) / 500.0;
 
-		universe.addPlanet(new Planet( rand() % 100 + 100,	Vector( x, y), Vector( xv, yv ), i ));
+		if (x > 0) {
+			if (y > 0) {
+				xv = 0;
+				if (yv > 0) yv = -yv;
+			}
+			else
+			{
+				yv = 0;
+				if (xv > 0) xv = -xv;
+			}
+		}
+		else {
+			if (y > 0) {
+				yv = 0;
+				if (xv < 0) xv = -xv;
+			}
+			else
+			{
+				xv = 0;
+				if (yv < 0) yv = -yv;
+			}
+		}
+
+//		xv = nsign(x, xv);
+//		yv = nsign(y, yv);
+
+		universe.addPlanet(new Planet( rand() % 100 + 100,	Vector( x, y), Vector( xv, yv ), i+1 ));
 	}//*/
-	double d = ((rand() - 500.0) / 500.0);
+//	double d = ((rand() - 500.0) / 500.0);
+	iNPlanets = universe.planets.size();
+
+
 #endif
 
 	// Orbiting planets
@@ -79,6 +111,8 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 
 	universe.addPlanet(new Planet(dSun, Vector(0, 0), Vector(0, 0) , 0));		//   "Sun"
 	universe.addPlanet(new Planet(dPlanet1, Vector( 300, 300 ), Vector( 0.3, -0.3) , 1));
+
+	iNPlanets = universe.planets.size();
 
 #endif
 
@@ -222,8 +256,9 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 	universe.addPlanet(new Planet(dPlanet1, Vector(0, z), Vector(speed, 0) , 1));
 
 	// Lagrange L2
+
 	double dL2Dist = z * std::cbrt(dPlanet1 / ( 3 * ( dSun + dPlanet1 )));		// First aprox
-	dL2Dist += 0.401793935;			// The fiddle factor needed for the L2 satellite to stay in place for at least 1.5 of a revolution..... :)
+	dL2Dist += 0.397667215;			// The fiddle factor needed for the L2 satellite to stay in place for at least for a revolution..... :)
 	double speedL2 = speed * (z + dL2Dist) / z;
 	
 

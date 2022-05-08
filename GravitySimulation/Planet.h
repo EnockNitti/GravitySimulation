@@ -12,7 +12,13 @@ struct Planet
 
 	Planet(double mass, Vector position, Vector velocity, int iNr = 0, double dL2Dist = 0 );
 
-	void updateVelocity(std::vector<Planet*>& others);
+//	void updateVelocity(std::vector<Planet*>& others);
+	void updateVelocityFirst(std::vector<Planet*>& others);
+	void updateVelocityOthers(std::vector<Planet*>& others, int iPNr );
+	void updateVelocityInit(std::vector<Planet*>& Planets);
+
+
+
 	void updatePosition();
 	
 	void render();
