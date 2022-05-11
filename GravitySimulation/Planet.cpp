@@ -11,7 +11,7 @@ Planet::Planet(double mass, Vector position, Vector velocity, int iNr, double dL
 	this->acceleration = Vector();
 	this->mass = mass;
 	this->position = position;
-	this->velocity = velocity * sqrt(TIME_STEP);
+	this->velocity = velocity * sqrt(dTimeStep);
 	this->Momentum = velocity * mass;
 	this->iNr = iNr;
 	this->dL2Dist = dL2Dist;
@@ -33,6 +33,8 @@ Planet::Planet(double mass, Vector position, Vector velocity, int iNr, double dL
 
 static double dMaxAcceleration = 0;
 
+/*************************************/
+
 void Planet::updateVelocityInit(std::vector<Planet*>& Planets)
 {
 	for (int i = 0; i < iNPlanets; i++)
@@ -41,60 +43,15 @@ void Planet::updateVelocityInit(std::vector<Planet*>& Planets)
 	}
 }
 
-#define MAXACC 1e-7
+/*************************************/
 
-#if 0
-
-void Planet::updateVelocityFirst(std::vector<Planet*>& others)
+double Planet::updateAccs(std::vector<Planet*>& others, int iPNr )
 {
-	Vector acceleration;
 
-	for (int i = 1; i < iNPlanets; i++)
-	{
-		Planet* other = others[i];
-		other->acceleration.Zero();
+	double dMaxAcc = 0;
+	static 	double dHighAcc = 0;
+	static Vector vForce;
 
-		Vector posV;
-		posV.x = other->position.x - this->position.x;
-		posV.y = other->position.y - this->position.y;
-
-		double distance2 = ((position.x - other->position.x) * (position.x - other->position.x) +
-			(position.y - other->position.y) * (position.y - other->position.y));
-
-		double distance = sqrt(distance2);
-		Vector mag = posV / distance;
-		Vector mag2 = mag;
-
-		acceleration = mag * other->mass * G / distance2 * TIME_STEP;
-		other->acceleration -= ( mag2 * this->mass * G / distance2 * TIME_STEP );
-//		printf(" ");
-	}
-
-/*
-	if (acceleration.x > dMaxAcceleration)
-	{
-		dMaxAcceleration = acceleration.x;
-		printf("%g\n", dMaxAcceleration);
-
-	}
-	if (acceleration.y > dMaxAcceleration)
-	{
-		dMaxAcceleration = acceleration.y;
-		printf("%g\n", dMaxAcceleration);
-	}
-*/
-	if (acceleration.x > MAXACC) acceleration.x = MAXACC;
-	if (acceleration.y > MAXACC) acceleration.y = MAXACC;
-	if (acceleration.x < -MAXACC) acceleration.x = -MAXACC;
-	if (acceleration.y < -MAXACC) acceleration.y = -MAXACC;
-
-	this->velocity += acceleration;
-	luiIterations++;
-}
-#endif
-
-void Planet::updateVelocityOthers(std::vector<Planet*>& others, int iPNr )
-{
 	for (int i = iPNr; i < iNPlanets-1; i++)
 	{
 		Planet* other = others[ i+1 ];
@@ -107,26 +64,32 @@ void Planet::updateVelocityOthers(std::vector<Planet*>& others, int iPNr )
 			(position.y - other->position.y) * (position.y - other->position.y));
 
 		double distance = sqrt(distance2);
-		Vector mag = posV / distance;
-		Vector mag2 = mag;
-		acceleration += mag * other->mass * G / distance2 * TIME_STEP;
-		other->acceleration -= mag2 * this->mass * G / distance2 * TIME_STEP;
-		if (acceleration.x > MAXACC) acceleration.x = MAXACC;
+		Vector vForce = (posV * G ) / (distance * distance2);
+		other->acceleration.x -= vForce.x * this->mass;
+		other->acceleration.y -= vForce.y * this->mass;
+		acceleration.x += vForce.x * other->mass;
+		acceleration.y += vForce.y * other->mass;
+
+		if (abs(acceleration.x) > dMaxAcc) dMaxAcc = abs(acceleration.x);
+		if (abs(acceleration.y) > dMaxAcc) dMaxAcc = abs(acceleration.y);
+		if (abs(other->acceleration.x) > dMaxAcc) dMaxAcc = abs(other->acceleration.x);
+		if (abs(other->acceleration.y) > dMaxAcc) dMaxAcc = abs(other->acceleration.y);
+
+	}
+	if (dHighAcc < dMaxAcc * 0.9) {
+		dHighAcc = dMaxAcc;
+		printf("%e\n", dHighAcc);
 	}
 
-	if (acceleration.x > MAXACC) acceleration.x = MAXACC;
-	if (acceleration.y > MAXACC) acceleration.y = MAXACC;
-	if (acceleration.x < -MAXACC) acceleration.x = -MAXACC;
-	if (acceleration.y < -MAXACC) acceleration.y = -MAXACC;
-
-	this->velocity += acceleration;
-
-	luiIterations++;
+	return dMaxAcc * dTimeStep ;
 }
 
-void Planet::updatePosition()
+/*************************************/
+
+void Planet::updateVelocityAndPosition()
 {
 	EnterCriticalSection(&CriticalSection);
+	this->velocity += acceleration * dTimeStep;		
 	this->position += this->velocity;
 	LeaveCriticalSection(&CriticalSection);
 }

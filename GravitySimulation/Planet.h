@@ -14,10 +14,10 @@ struct Planet
 
 //	void updateVelocity(std::vector<Planet*>& others);
 	void updateVelocityFirst(std::vector<Planet*>& others);
-	void updateVelocityOthers(std::vector<Planet*>& others, int iPNr );
+	double updateAccs(std::vector<Planet*>& others, int iPNr );
 	void updateVelocityInit(std::vector<Planet*>& Planets);
-
-
+	void updateVelocityAndPosition();
+	
 
 	void updatePosition();
 	

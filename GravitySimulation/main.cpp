@@ -23,6 +23,8 @@ SDL_Renderer* renderer = NULL;
 SDL_Window* window = NULL;
 CRITICAL_SECTION CriticalSection;
 int iNPlanets = 0;
+double dTimeStep = TIMESTEP;
+
 
 int main(int argc, char* argv[])
 {

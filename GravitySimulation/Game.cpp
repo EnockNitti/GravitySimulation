@@ -107,10 +107,10 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 #if ELIPTIC
 
 	double dSun = 100000.0;
-	double dPlanet1 = 1000.0;
+	double dPlanet1 = 10.0;
 
 	universe.addPlanet(new Planet(dSun, Vector(0, 0), Vector(0, 0) , 0));		//   "Sun"
-	universe.addPlanet(new Planet(dPlanet1, Vector( 300, 300 ), Vector( 0.3, -0.3) , 1));
+	universe.addPlanet(new Planet(dPlanet1, Vector( 300, 300 ), Vector( 0.1, -0.1) , 1));
 
 	iNPlanets = universe.planets.size();
 
