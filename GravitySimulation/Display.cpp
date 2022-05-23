@@ -58,7 +58,7 @@ int Display::fRender()
 #endif
 		SDL_Delay( FRAMEDELAY );
 
-		EnterCriticalSection(&CriticalSection);
+//		EnterCriticalSection(&CriticalSection);
 #if LOGL4
 		if (pLagrange->iNr >= 100) {
 			pLagrange->position = pPlanet->position;		// L4
@@ -71,7 +71,7 @@ int Display::fRender()
 			pLagrange->position.Extend(pLagrange->dL2Dist);
 		}
 #endif
-		LeaveCriticalSection(&CriticalSection);
+//		LeaveCriticalSection(&CriticalSection);
 
 		// render all new stuff
 		for (auto& planet : game->universe.planets) {

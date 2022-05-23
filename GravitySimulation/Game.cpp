@@ -41,12 +41,6 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 		isRunning = true;
 	}
 
-	// 4 Planets in a circle
-/*	universe.addPlanet(new Planet(100000, Vector(-400, 0  ), Vector(0, 1) ));
-	universe.addPlanet(new Planet(100000, Vector( 400, 0 ), Vector(0, -1) ));
-	universe.addPlanet(new Planet(100000, Vector( 0, -400), Vector(-1, 0) ));
-	universe.addPlanet(new Planet(100000, Vector( 0, 400 ), Vector(1, 0) ));//*/
-
 #if MANY
 
 	double dSun = 100000.0;
@@ -61,48 +55,46 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 	{
 		int x = (rand() % WIDTH - 450) / 2;
 		int y = (rand() % HIGHT - 450) / 2;
-		double xv = (rand() - RAND_MAX / 2) / 500.0;
-		double yv = (rand() - RAND_MAX / 2) / 500.0;
+
+//		double dMass = rand() % 100 + 100.0;
+		double dMass = rand() % 500 + 100.0;
+		double dDistance = sqrt(x * x + y * y);
+		double dSpeed = sqrt(G * ((dSun + dMass) / dDistance));
+//		double xv = speed + (rand() - RAND_MAX / 2) / 100.0;
+//		double yv = speed + (rand() - RAND_MAX / 2) / 100.0;
+		double xv = dSpeed;
+		double yv = dSpeed;
+		double dLowSpeed = dSpeed / 5;
 
 		if (x > 0) {
 			if (y > 0) {
-				xv = 0;
+				xv = dLowSpeed;
 				if (yv > 0) yv = -yv;
 			}
 			else
 			{
-				yv = 0;
+				yv = dLowSpeed;
 				if (xv > 0) xv = -xv;
 			}
 		}
 		else {
 			if (y > 0) {
-				yv = 0;
+				yv = dLowSpeed;
 				if (xv < 0) xv = -xv;
 			}
 			else
 			{
-				xv = 0;
+				xv = dLowSpeed;
 				if (yv < 0) yv = -yv;
 			}
 		}
 
-//		xv = nsign(x, xv);
-//		yv = nsign(y, yv);
-
-		universe.addPlanet(new Planet( rand() % 100 + 100,	Vector( x, y), Vector( xv, yv ), i+1 ));
+		universe.addPlanet(new Planet( dMass, Vector( x, y), Vector( xv, yv ), i+1 ));
 	}//*/
-//	double d = ((rand() - 500.0) / 500.0);
 	iNPlanets = universe.planets.size();
 
 
 #endif
-
-	// Orbiting planets
-/*	universe.addPlanet(new Planet(100000, Vector( 0 , 0 ), Vector(0, 0 ) ));		//   "Sun"
-	universe.addPlanet(new Planet(1000, Vector(	0, 300 ), Vector( 0.75, 0 ) , 1));
-	universe.addPlanet(new Planet(1000, Vector( 300 , -300 ), Vector( -0.25, 0.2) , 0));
-	universe.addPlanet(new Planet(1000, Vector( 0, -300 ), Vector(-0.75, 0) ));//*/
 
 #if ELIPTIC
 
@@ -133,7 +125,7 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 
 	iNPlanets = universe.planets.size();
 
-	// Marker
+	// Marker    
 	universe.addPlanet(new Planet(dL4, Vector(cos(30.0 / 360 * pi2) * z, sin(30.0 / 360 * pi2) * z),
 		Vector( 0,0 ) , 100));//*/
 
@@ -215,7 +207,7 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 	double O1 = 200;
 	double O2 = 300;
 	double O3 = 400;
-	double O4 = 500;
+	double O4 = 350;
 
 	universe.addPlanet(new Planet(dSun, Vector(0, 0), Vector(0, 0) ));		//   "Sun"
 	
@@ -235,11 +227,11 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 	Vel = Vector(sqrt((G * ((dSun + dPlanet) / O3))), 0.0);
 	universe.addPlanet(new Planet(dPlanet, Pos, Vel , 4));
 
-/*	// a rough planet :)
+	// a rough planet :)
 	Pos = Vector(0, O4);
 	Vel = Vector(sqrt((G * ((dSun + dPlanet) / O3)) -1.0), -0.3);
 	universe.addPlanet(new Planet(dPlanet, Pos, Vel , 5));
-*/
+
 	iNPlanets = universe.planets.size();
 
 #endif

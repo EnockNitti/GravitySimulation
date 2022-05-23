@@ -39,11 +39,25 @@ Vector& Vector::Multiply(const Vector& vec)
 
 	return *this;
 }
+Vector& Vector::Multiply(const double i )
+{
+	this->x *= i;
+	this->y *= i;
+
+	return *this;
+}
 
 Vector& Vector::Divide(const Vector& vec)
 {
 	this->x /= vec.x;
 	this->y /= vec.y;
+
+	return *this;
+}
+Vector& Vector::Divide(const double i )
+{
+	this->x /= i;
+	this->y /= i;
 
 	return *this;
 }
@@ -60,6 +74,7 @@ Vector& Vector::Rotate(const double& Alpha)
 
 Vector& Vector::Extend(const double& dLen)
 {
+	// what is this ??
 	double alpha = atan2( this->y, this->x );
 	this->y += sin(alpha) * dLen;
 	this->x += cos(alpha) * dLen;
@@ -69,22 +84,22 @@ Vector& Vector::Extend(const double& dLen)
 
 
 
-Vector& operator+(Vector vec1, const Vector vec2)
+Vector operator+(Vector vec1, const Vector vec2)
 {
 	return vec1.Add(vec2);
 }
 
-Vector& operator-(Vector vec1, const Vector vec2)
+Vector operator-(Vector vec1, const Vector vec2)
 {
 	return vec1.Substract(vec2);
 }
 
-Vector& operator*(Vector vec1, const Vector vec2)
+Vector operator*(Vector vec1, const Vector vec2)
 {
 	return vec1.Multiply(vec2);
 }
 
-Vector& operator/(Vector vec1, const Vector vec2)
+Vector operator/(Vector vec1, const Vector vec2)
 {
 	return vec1.Divide(vec2);
 }

@@ -5,63 +5,51 @@ void Universe::addPlanet(Planet* planet)
 	planets.push_back(planet);
 }
 
+/*******************************************************************/
+
 void Universe::update()
 {
 	planets[0]->updateVelocityInit(planets);
 
 	// Update acceleration
 	double dDeltaVMax = 0;
-	for (int i = 0; i < iNPlanets-1; i++)
+	for (;; )
 	{
-		double dDeltaV = planets[i]->updateAccs(planets, i);
+		double dDeltaV = updateAccs(planets);
+		break;
+#if 1
 		if (dDeltaV > DELTAVMAX) {
-			i = -1;	// Restart with new TIME_STEP
 			dTimeStep = dTimeStep / 4;
 
-			printf("%e\n", dTimeStep);
 			for (int i = 0; i < iNPlanets; i++)
 			{
 				planets[i]->acceleration.Zero();
 				dDeltaVMax = 0;
 				planets[i]->velocity / 2.0;
 			}
+			printf("TimeStep %e\n", dTimeStep);
+			continue;			// retry with a shorter timestep
 		}
-		else if( dDeltaV < DELTAVMIN && dTimeStep < TIMESTEP ) {
-			i = -1;	// Restart with new TIME_STEP
+		else if (dDeltaV < DELTAVMIN && dTimeStep < TIMESTEP) {
 			dTimeStep = dTimeStep * 4;
 
-			printf("%e\n", dTimeStep);
 			for (int i = 0; i < iNPlanets; i++)
 			{
-				planets[i]->acceleration.Zero();
-				dDeltaVMax = 0;
 				planets[i]->velocity * 2.0;
 			}
+			printf("TimeStep %e\n", dTimeStep);
+			continue;			// retry with a longer timestep
 		}
 
 		if (dDeltaV > dDeltaVMax) dDeltaVMax = dDeltaV;
-	}
-
-#if 0
-	// Check speed
-	static double dHighSpeed = 0;
-	static int iPlanet = -1;
-	for (int i = 0; i < iNPlanets; i++)
-	{
-		double dSpeed = sqrt(planets[i]->velocity.x * planets[i]->velocity.x + planets[i]->velocity.y * planets[i]->velocity.y);
-		if (dSpeed * 0.99 > dHighSpeed) {
-			dHighSpeed = dSpeed;
-			iPlanet = i;
-//			printf("%d %g\n", iPlanet, dHighSpeed);
-		}
-	}
+		break;
 #endif
+	}
 
-	// Velocity And Position
+	// Upppdate Velocity And Position
 	for (int i = 0; i < iNPlanets; i++)
 	{
 		planets[i]->updateVelocityAndPosition();
-//		planets[i]->updatePosition();
 	}
 }
 

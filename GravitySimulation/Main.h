@@ -47,31 +47,28 @@ extern double dTimeStep;
 #define DENSITY 1.0
 
 #if MANY 
-//#define TIME_STEP ( 1.0 / 0x10000000000 )
-
-#define G (1.0)
-//#define TIME_STEP ( 1.0 / 0x100000000 )
-#define TIME_STEP ( dTimeStep )
-#define MINACC 1e-10
-#define MAXACC 1e-7
+#define G (1.0 / 2 )
+#define DELTAVMAX (2.0 / 10000)
+#define DELTAVMIN (0.125 / 10000)
+#define TIMESTEP (2.0 / 10000000000)
 
 
 
 
 #elif LOGL2
 
-#define G (1.0 / 128)
-//#define TIME_STEP ( 1.0 / 0x100000000 )
-#define TIME_STEP ( dTimeStep )
+#define G (1.0 / 128.0)
+#define TIMESTEP ( 1.0 / 0x100000000 )
+//#define TIME_STEP ( dTimeStep )
 #define MINACC 1e-7
 #define MAXACC 1e-5
 
 
 #else
-#define G (1.0 / 64 )
-#define DELTAVMAX (2.0 / 10000000000)
-#define DELTAVMIN (0.125 / 10000000000)
-#define TIMESTEP (2.0 / 1000000000)
+#define G (1.0 / 64.0 )
+#define DELTAVMAX (2.0 / 10000000000.0)
+#define DELTAVMIN (0.125 / 10000000000.0)
+#define TIMESTEP (2.0 / 10000000000.0)
 
 
 #endif

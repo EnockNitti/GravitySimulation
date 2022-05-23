@@ -1,5 +1,6 @@
 #pragma once
 
+
 struct Planet
 {
 	double radius, mass;
@@ -12,14 +13,12 @@ struct Planet
 
 	Planet(double mass, Vector position, Vector velocity, int iNr = 0, double dL2Dist = 0 );
 
-//	void updateVelocity(std::vector<Planet*>& others);
-	void updateVelocityFirst(std::vector<Planet*>& others);
-	double updateAccs(std::vector<Planet*>& others, int iPNr );
+	double updateAccs(std::vector<Planet*>& others, int iPNr);
 	void updateVelocityInit(std::vector<Planet*>& Planets);
 	void updateVelocityAndPosition();
-	
-
 	void updatePosition();
 	
 	void render();
 };
+
+double updateAccs(std::vector<Planet*>& planets);

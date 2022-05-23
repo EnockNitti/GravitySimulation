@@ -44,7 +44,7 @@ void Planet::updateVelocityInit(std::vector<Planet*>& Planets)
 }
 
 /*************************************/
-
+#if 0
 double Planet::updateAccs(std::vector<Planet*>& others, int iPNr )
 {
 
@@ -83,15 +83,67 @@ double Planet::updateAccs(std::vector<Planet*>& others, int iPNr )
 
 	return dMaxAcc * dTimeStep ;
 }
+#endif
+
+/**********      Update all accelerations  **************/
+
+double updateAccs(std::vector<Planet*>& planets )
+{
+	double dMaxAcc = 0;
+	static 	double dHighAcc = 0;
+
+	int iNPlanets = planets.size();
+	for (int i = 0; i < iNPlanets - 1; i++)
+		planets[i]->acceleration.Zero();
+
+	for (int i = 0; i < iNPlanets - 1; i++)
+	{
+		Planet* Me = planets[ i ];
+		if (Me->iNr >= 100 ) continue;
+
+		for (int j = i + 1; j < iNPlanets; j++)
+		{
+			Planet* other = planets[j];
+			if ( other->iNr >= 100) continue;
+
+			Vector posV;
+			posV.x = other->position.x - Me->position.x;
+			posV.y = other->position.y - Me->position.y;
+
+			double distance2 = (posV.x * posV.x) + (posV.y * posV.y);
+
+			double distance = sqrt(distance2);
+			Vector vGForce = (posV * G) / (distance * distance2);
+			other->acceleration.x -= vGForce.x * Me->mass;
+			other->acceleration.y -= vGForce.y * Me->mass;
+			Me->acceleration.x += vGForce.x * other->mass;
+			Me->acceleration.y += vGForce.y * other->mass;
+
+			if (abs(Me->acceleration.x) > dMaxAcc) dMaxAcc = abs(Me->acceleration.x);
+			if (abs(Me->acceleration.y) > dMaxAcc) dMaxAcc = abs(Me->acceleration.y);
+			if (abs(other->acceleration.x) > dMaxAcc) dMaxAcc = abs(other->acceleration.x);
+			if (abs(other->acceleration.y) > dMaxAcc) dMaxAcc = abs(other->acceleration.y);
+
+			luiIterations++;
+		}
+
+		if (dHighAcc < dMaxAcc * 0.9) {
+			dHighAcc = dMaxAcc;
+			printf("%e\n", dHighAcc);
+		}
+	}
+	return dMaxAcc * dTimeStep;
+}
+
 
 /*************************************/
 
 void Planet::updateVelocityAndPosition()
 {
-	EnterCriticalSection(&CriticalSection);
+//	EnterCriticalSection(&CriticalSection);
 	this->velocity += acceleration * dTimeStep;		
 	this->position += this->velocity;
-	LeaveCriticalSection(&CriticalSection);
+//	LeaveCriticalSection(&CriticalSection);
 }
 
 // Render one planet

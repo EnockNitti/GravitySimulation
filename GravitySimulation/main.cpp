@@ -28,7 +28,7 @@ double dTimeStep = TIMESTEP;
 
 int main(int argc, char* argv[])
 {
-	Uint32 uiNow;
+	Uint32 uiNow = 0;
 	Uint32 uiTimeStart = 0;
 	Uint32 luiTimeStart = 0;
 	InitializeCriticalSection(&CriticalSection);
@@ -42,25 +42,27 @@ int main(int argc, char* argv[])
 
 	while (game->running())
 	{
+
 		static int i = 0;
 
-		uiNow = SDL_GetTicks();
-		game->handleEvents();
+		if (uiNow % 100 == 0)
+		{
+			game->handleEvents();
+			uiNow = SDL_GetTicks();
+		}
 		game->update();
 
 		if (uiNow >= uiTimeStart + FRAMEDELAY)
 		{
 			uiTimeStart = uiNow + FRAMEDELAY;
-//			game->render();
 		}
 		if (uiNow >= luiTimeStart + 10000)
 		{
-			printf(":%ld\n", luiIterations );
+			printf("%ld\n", luiIterations);
 			luiTimeStart += 10000;
 		}
-
+		uiNow++;
 	}
-
 	//ShowWindow(GetConsoleWindow(), SW_RESTORE);
 	game->clean();
 
