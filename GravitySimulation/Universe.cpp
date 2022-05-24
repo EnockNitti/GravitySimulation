@@ -9,41 +9,18 @@ void Universe::addPlanet(Planet* planet)
 
 void Universe::update()
 {
-	planets[0]->updateVelocityInit(planets);
+//	planets[0]->updateVelocityInit(planets);
+
+	int iNPlanets = planets.size();
+	for (int i = 0; i < iNPlanets; i++)
+		planets[i]->acceleration.Zero();	// All accelerations to 0
 
 	// Update acceleration
 	double dDeltaVMax = 0;
-	for (;; )
+	for ( int i = 0; i < iNPlanets; i++ )
 	{
-		double dDeltaV = updateAccs(planets);
-		break;
-#if 1
-		if (dDeltaV > DELTAVMAX) {
-			dTimeStep = dTimeStep / 4;
-
-			for (int i = 0; i < iNPlanets; i++)
-			{
-				planets[i]->acceleration.Zero();
-				dDeltaVMax = 0;
-				planets[i]->velocity / 2.0;
-			}
-			printf("TimeStep %e\n", dTimeStep);
-			continue;			// retry with a shorter timestep
-		}
-		else if (dDeltaV < DELTAVMIN && dTimeStep < TIMESTEP) {
-			dTimeStep = dTimeStep * 4;
-
-			for (int i = 0; i < iNPlanets; i++)
-			{
-				planets[i]->velocity * 2.0;
-			}
-			printf("TimeStep %e\n", dTimeStep);
-			continue;			// retry with a longer timestep
-		}
-
-		if (dDeltaV > dDeltaVMax) dDeltaVMax = dDeltaV;
-		break;
-#endif
+		if( planets[i]->iNr >= 100) continue;
+		double dDeltaV = planets[i]->updateAccs(i, planets);
 	}
 
 	// Upppdate Velocity And Position
@@ -67,8 +44,7 @@ void Universe::MomentumAdjust()
 
 	for (auto& planet : planets) {
 		dMyMassQ = planet->mass / dTotalMass;			
-		Vector TempMomentum = TotMomentum;			// "#¤%& :(			V * m
-		Vector VelocityAdjust = TempMomentum * dMyMassQ / dTotalMass;	//  V * m / m
+		Vector VelocityAdjust = TotMomentum * dMyMassQ / dTotalMass;	//  V * m / m
 		planet->velocity -= VelocityAdjust;
 	}
 }

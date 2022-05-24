@@ -1,15 +1,15 @@
 #pragma once
 
-#define ELIPTIC true
+#define ELIPTIC false
 #define LOGL4 false
-#define LOGL2 false
+#define LOGL2 true
 #define MANY false
 #define SYSTEM false
 #define TWOPLANETS false
 #define SUNMOON false
 
 #define TRACKS true
-#define TRACKLEN 252
+#define TRACKLEN 251
 
 #include <Windows.h>
 #include <time.h>
@@ -48,9 +48,7 @@ extern double dTimeStep;
 
 #if MANY 
 #define G (1.0 / 2 )
-#define DELTAVMAX (2.0 / 10000)
-#define DELTAVMIN (0.125 / 10000)
-#define TIMESTEP (2.0 / 10000000000)
+#define TIMESTEP (2.0 / 1000000000000)
 
 
 
@@ -58,17 +56,13 @@ extern double dTimeStep;
 #elif LOGL2
 
 #define G (1.0 / 128.0)
-#define TIMESTEP ( 1.0 / 0x100000000 )
 //#define TIME_STEP ( dTimeStep )
-#define MINACC 1e-7
-#define MAXACC 1e-5
+#define TIMESTEP (2.0 / 100000000000.0)
 
 
 #else
 #define G (1.0 / 64.0 )
-#define DELTAVMAX (2.0 / 10000000000.0)
-#define DELTAVMIN (0.125 / 10000000000.0)
-#define TIMESTEP (2.0 / 10000000000.0)
+#define TIMESTEP (2.0 / 100000000.0)
 
 
 #endif

@@ -125,7 +125,7 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 
 	iNPlanets = universe.planets.size();
 
-	// Marker    
+	// Marker    Red
 	universe.addPlanet(new Planet(dL4, Vector(cos(30.0 / 360 * pi2) * z, sin(30.0 / 360 * pi2) * z),
 		Vector( 0,0 ) , 100));//*/
 

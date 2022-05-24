@@ -24,7 +24,42 @@ void InitDisplayThread()
 	}
 }
 
-//**********************************
+//********************************** 
+Vector GetPlanetPosition( Vector * pPosV )
+{
+	Vector PosV;
+	char ac[ sizeof PosV ];
+	// "atomic read   :)  
+	for (;; ) {
+		memcpy( &PosV, pPosV, sizeof( PosV ));
+		break;
+		memcpy( &ac, pPosV, sizeof( PosV ));
+		if (memcmp( &PosV, ac, sizeof( PosV )) == 0) break;
+	}
+	return PosV;
+}
+
+//********************************** 
+//#pragma optimize( "", off )
+
+void SetPlanetPosition( Vector *pPosition, Vector Position)
+{
+	Vector PosV;
+	char ac[sizeof PosV];
+	// "atomic write   :)  
+	for( ;; )
+	{
+		memcpy( pPosition, &Position, sizeof(PosV));
+		break;
+		memcpy( &ac, pPosition, sizeof(PosV));
+		if (memcmp( &Position, ac, sizeof(PosV)) == 0) break;
+		pPosition->x += 1;
+	}
+}
+
+//#pragma optimize( "", on )
+
+//********************************** 
 
 #if 1
 // Render planets, present new universe
@@ -58,26 +93,36 @@ int Display::fRender()
 #endif
 		SDL_Delay( FRAMEDELAY );
 
-//		EnterCriticalSection(&CriticalSection);
+		EnterCriticalSection(&CriticalSection);
 #if LOGL4
 		if (pLagrange->iNr >= 100) {
-			pLagrange->position = pPlanet->position;		// L4
+			// "atomic read   :)  
+			for (;; ) {
+				memcpy(&pLagrange->position, &pPlanet->position, sizeof(pPlanet->position));
+				memcpy(&ac, &pPlanet->position, sizeof(pPlanet->position));
+				if (memcmp(&pLagrange->position, ac, sizeof(pPlanet->position)) == 0) break;
+		}
 			pLagrange->position.Rotate(pi2 * -60 / 360);
 		}
 #endif
 #if LOGL2
-		if (pLagrange->iNr >= 100) {
-			pLagrange->position = pPlanet->position;
-			pLagrange->position.Extend(pLagrange->dL2Dist);
+		if (pLagrange->iNr >= 100)
+		{
+
+			Vector Position = GetPlanetPosition(&pPlanet->position);
+			Position.Extend( pLagrange->dL2Dist );
+
+			SetPlanetPosition( &pLagrange->position, Position);
+
 		}
 #endif
-//		LeaveCriticalSection(&CriticalSection);
+//		LeaveCriticalSection(&CriticalSection);			// But here
 
 		// render all new stuff
 		for (auto& planet : game->universe.planets) {
 			planet->render();
 		}
-//		LeaveCriticalSection(&CriticalSection);   // seems like it is not needed here   why ??
+		LeaveCriticalSection(&CriticalSection);   // seems like it is not needed here   why ??
 
 #if TRACKS
 		{

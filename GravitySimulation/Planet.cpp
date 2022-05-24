@@ -12,7 +12,8 @@ Planet::Planet(double mass, Vector position, Vector velocity, int iNr, double dL
 	this->mass = mass;
 	this->position = position;
 	this->velocity = velocity * sqrt(dTimeStep);
-	this->Momentum = velocity * mass;
+//	this->velocity = velocity * dTimeStep;
+	this->Momentum = this->velocity * mass;
 	this->iNr = iNr;
 	this->dL2Dist = dL2Dist;
 
@@ -85,42 +86,33 @@ double Planet::updateAccs(std::vector<Planet*>& others, int iPNr )
 }
 #endif
 
-/**********      Update all accelerations  **************/
+/**********      Update accelerations  **************/
 
-double updateAccs(std::vector<Planet*>& planets )
+double Planet::updateAccs( int iPlanet, std::vector<Planet*> planets)
 {
 	double dMaxAcc = 0;
 	static 	double dHighAcc = 0;
 
-	int iNPlanets = planets.size();
-	for (int i = 0; i < iNPlanets - 1; i++)
-		planets[i]->acceleration.Zero();
-
-	for (int i = 0; i < iNPlanets - 1; i++)
-	{
-		Planet* Me = planets[ i ];
-		if (Me->iNr >= 100 ) continue;
-
-		for (int j = i + 1; j < iNPlanets; j++)
+		for (int i = iPlanet + 1; i < iNPlanets; i++)
 		{
-			Planet* other = planets[j];
+			Planet* other = planets[ i ];
 			if ( other->iNr >= 100) continue;
 
 			Vector posV;
-			posV.x = other->position.x - Me->position.x;
-			posV.y = other->position.y - Me->position.y;
+			posV.x = other->position.x - this->position.x;
+			posV.y = other->position.y - this->position.y;
 
 			double distance2 = (posV.x * posV.x) + (posV.y * posV.y);
 
 			double distance = sqrt(distance2);
 			Vector vGForce = (posV * G) / (distance * distance2);
-			other->acceleration.x -= vGForce.x * Me->mass;
-			other->acceleration.y -= vGForce.y * Me->mass;
-			Me->acceleration.x += vGForce.x * other->mass;
-			Me->acceleration.y += vGForce.y * other->mass;
+			other->acceleration.x -= vGForce.x * this->mass;
+			other->acceleration.y -= vGForce.y * this->mass;
+			this->acceleration.x += vGForce.x * other->mass;
+			this->acceleration.y += vGForce.y * other->mass;
 
-			if (abs(Me->acceleration.x) > dMaxAcc) dMaxAcc = abs(Me->acceleration.x);
-			if (abs(Me->acceleration.y) > dMaxAcc) dMaxAcc = abs(Me->acceleration.y);
+			if (abs(this->acceleration.x) > dMaxAcc) dMaxAcc = abs(this->acceleration.x);
+			if (abs(this->acceleration.y) > dMaxAcc) dMaxAcc = abs(this->acceleration.y);
 			if (abs(other->acceleration.x) > dMaxAcc) dMaxAcc = abs(other->acceleration.x);
 			if (abs(other->acceleration.y) > dMaxAcc) dMaxAcc = abs(other->acceleration.y);
 
@@ -131,7 +123,6 @@ double updateAccs(std::vector<Planet*>& planets )
 			dHighAcc = dMaxAcc;
 			printf("%e\n", dHighAcc);
 		}
-	}
 	return dMaxAcc * dTimeStep;
 }
 
@@ -140,8 +131,8 @@ double updateAccs(std::vector<Planet*>& planets )
 
 void Planet::updateVelocityAndPosition()
 {
-//	EnterCriticalSection(&CriticalSection);
 	this->velocity += acceleration * dTimeStep;		
+//	EnterCriticalSection(&CriticalSection);
 	this->position += this->velocity;
 //	LeaveCriticalSection(&CriticalSection);
 }
@@ -151,8 +142,12 @@ void Planet::render()
 {
 	destRect.w = destRect.h = (int)radius * 2;
 
+//	EnterCriticalSection(&CriticalSection);
+
 	destRect.x = (int)(position.x - radius + WIDTH / 2);
 	destRect.y = HIGHT - (int)(position.y + radius + HIGHT / 2);			// Y upp, center origo
+
+//	LeaveCriticalSection(&CriticalSection);			// But here
 
 	if (SDL_RenderCopy(renderer, texture, 0, &destRect) != 0)
 	{

@@ -82,12 +82,12 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>D:\SDL2\SDL2-2.0.20\include;D:\SDL2\SDL2-2.0.20\include\SDL_image;$(IncludePath)</IncludePath>
+    <IncludePath>D:\SDL2\SDL2-2.0.20\include;$(IncludePath)</IncludePath>
     <LibraryPath>D:\SDL2\SDL2-2.0.20\lib\x64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>D:\SDL2\SDL2-2.0.20\include;D:\SDL2\SDL2-2.0.20\include\SDL_image;$(IncludePath)</IncludePath>
+    <IncludePath>D:\SDL2\SDL2-2.0.20\include;$(IncludePath)</IncludePath>
     <LibraryPath>D:\SDL2\SDL2-2.0.20\lib\x64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">

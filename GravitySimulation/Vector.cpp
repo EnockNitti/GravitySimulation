@@ -1,9 +1,6 @@
 #include "Vector.h"
 #include "math.h"
 
-// Note: These functions are "self destructing" that is, the results are 
-// returned in the object itself
-
 Vector::Vector()
 {
 	x = 0;
@@ -39,25 +36,11 @@ Vector& Vector::Multiply(const Vector& vec)
 
 	return *this;
 }
-Vector& Vector::Multiply(const double i )
-{
-	this->x *= i;
-	this->y *= i;
-
-	return *this;
-}
 
 Vector& Vector::Divide(const Vector& vec)
 {
 	this->x /= vec.x;
 	this->y /= vec.y;
-
-	return *this;
-}
-Vector& Vector::Divide(const double i )
-{
-	this->x /= i;
-	this->y /= i;
 
 	return *this;
 }
@@ -74,34 +57,31 @@ Vector& Vector::Rotate(const double& Alpha)
 
 Vector& Vector::Extend(const double& dLen)
 {
-	// what is this ??
-	double alpha = atan2( this->y, this->x );
+	double alpha = atan2(this->y, this->x);
 	this->y += sin(alpha) * dLen;
 	this->x += cos(alpha) * dLen;
 
 	return *this;
 }
 
-
-
-Vector operator+(Vector vec1, const Vector vec2)
+Vector operator+(const Vector& vec1, const Vector& vec2)
 {
-	return vec1.Add(vec2);
+	return { vec1.x + vec2.x, vec1.y + vec2.y };
 }
 
-Vector operator-(Vector vec1, const Vector vec2)
+Vector operator-(const Vector& vec1, const Vector& vec2)
 {
-	return vec1.Substract(vec2);
+	return { vec1.x - vec2.x, vec1.y - vec2.y };
 }
 
-Vector operator*(Vector vec1, const Vector vec2)
+Vector operator*(const Vector& vec1, const Vector& vec2)
 {
-	return vec1.Multiply(vec2);
+	return { vec1.x * vec2.x, vec1.y * vec2.y };
 }
 
-Vector operator/(Vector vec1, const Vector vec2)
+Vector operator/(const Vector& vec1, const Vector& vec2)
 {
-	return vec1.Divide(vec2);
+	return { vec1.x / vec2.x, vec1.y / vec2.y };
 }
 
 Vector& Vector::operator+=(const Vector vec)
@@ -124,20 +104,14 @@ Vector& Vector::operator/=(const Vector vec)
 	return this->Divide(vec);
 }
 
-Vector& Vector::operator/(const double& i)
+Vector Vector::operator/(const double& i)
 {
-	this->x /= i;
-	this->y /= i;
-
-	return *this;
+	return { this->x / i, this->y / i };
 }
 
-Vector& Vector::operator*(const double& i)
+Vector Vector::operator*(const double& i)
 {
-	this->x *= i;
-	this->y *= i;
-
-	return *this;
+	return { this->x * i, this->y * i };
 }
 
 Vector& Vector::Zero()
@@ -158,3 +132,4 @@ std::ostream& operator<<(std::ostream& stream, const Vector vec)
 	stream << "Vector(" << vec.x << ", " << vec.y << ")";
 	return stream;
 }
+
