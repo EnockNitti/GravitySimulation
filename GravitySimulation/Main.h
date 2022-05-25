@@ -40,29 +40,45 @@ extern double dTimeStep;
 //#define FPS 60
 #define FPS 100
 #define FRAMEDELAY ( 1000 / FPS )
+#ifdef _DEBUG
+#define DBGSPEED 1
+#else
+#define DBGSPEED 100
+#endif
 
 #define HIGHT 1000
 #define WIDTH 1000
 #define PI 3.14159
 #define DENSITY 1.0
 
+
 #if MANY 
 #define G (1.0 / 2 )
-#define TIMESTEP (2.0 / 1000000000000)
-
-
-
+#define TIMESTEP (2.0 / ( 10000000000.0 * DBGSPEED ))
 
 #elif LOGL2
-
 #define G (1.0 / 128.0)
-//#define TIME_STEP ( dTimeStep )
-#define TIMESTEP (2.0 / 100000000000.0)
+#define TIMESTEP (2.0 / ( 1000000000.0 * DBGSPEED ))
 
+#elif SUNMOON
+#define G (1.0 / 64.0 )
+#define TIMESTEP (2.0 / ( 1000000000.0 * DBGSPEED))
+
+#elif TWOPLANETS
+#define G (1.0 / 64.0 )
+#define TIMESTEP (2.0 / ( 100000000.0 * DBGSPEED))
+
+#elif ELIPTIC
+#define G (1.0 / 64.0 )
+#define TIMESTEP (2.0 / ( 100000000.0 * DBGSPEED))
+
+#elif LOGL4
+#define G (1.0 / 64.0 )
+#define TIMESTEP (2.0 / ( 100000000.0 * DBGSPEED))
 
 #else
 #define G (1.0 / 64.0 )
-#define TIMESTEP (2.0 / 100000000.0)
+#define TIMESTEP (2.0 / ( 10000000.0 * DBGSPEED))
 
 
 #endif

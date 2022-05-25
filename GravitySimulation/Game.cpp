@@ -42,13 +42,10 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 	}
 
 #if MANY
-
+	// A random asortment of planets rotating clockvise aroun a sun
+	// Needs code for collision handling
 	double dSun = 100000.0;
-
 	universe.addPlanet(new Planet(dSun, Vector(0, 0), Vector(0, 0)));		//   "Sun"
-
-
-	// Random planets
 //#define	RAND_MAX 1000;
 	srand(  (unsigned int)time(NULL) );
 	for (int i = 0; i < 10; i++)

@@ -14,7 +14,6 @@ static int fRThread(void* pv)
 
 //**********************************
 
-//void Display::Init()
 void InitDisplayThread()
 {
 	pRThread = SDL_CreateThread( fRThread, "RThread", (void*)NULL);
@@ -25,47 +24,29 @@ void InitDisplayThread()
 }
 
 //********************************** 
+	// "atomic read"   :)  
+
 Vector GetPlanetPosition( Vector * pPosV )
 {
 	Vector PosV;
-	char ac[ sizeof PosV ];
-	// "atomic read   :)  
-	for (;; ) {
-		memcpy( &PosV, pPosV, sizeof( PosV ));
-		break;
-		memcpy( &ac, pPosV, sizeof( PosV ));
-		if (memcmp( &PosV, ac, sizeof( PosV )) == 0) break;
-	}
+	memcpy( &PosV, pPosV, sizeof( PosV ));
 	return PosV;
 }
 
 //********************************** 
-//#pragma optimize( "", off )
-
+/*
+// "atomic write"   :)  
 void SetPlanetPosition( Vector *pPosition, Vector Position)
 {
 	Vector PosV;
-	char ac[sizeof PosV];
-	// "atomic write   :)  
-	for( ;; )
-	{
-		memcpy( pPosition, &Position, sizeof(PosV));
-		break;
-		memcpy( &ac, pPosition, sizeof(PosV));
-		if (memcmp( &Position, ac, sizeof(PosV)) == 0) break;
-		pPosition->x += 1;
-	}
+	memcpy( pPosition, &Position, sizeof(PosV));
 }
-
-//#pragma optimize( "", on )
-
+*/
 //********************************** 
 
-#if 1
 // Render planets, present new universe
 int Display::fRender()
 {
-#if 1
 
 	static int iCnt = 0;
 	static SDL_Texture* tOldImage = NULL;
@@ -93,36 +74,26 @@ int Display::fRender()
 #endif
 		SDL_Delay( FRAMEDELAY );
 
-		EnterCriticalSection(&CriticalSection);
 #if LOGL4
 		if (pLagrange->iNr >= 100) {
-			// "atomic read   :)  
-			for (;; ) {
-				memcpy(&pLagrange->position, &pPlanet->position, sizeof(pPlanet->position));
-				memcpy(&ac, &pPlanet->position, sizeof(pPlanet->position));
-				if (memcmp(&pLagrange->position, ac, sizeof(pPlanet->position)) == 0) break;
-		}
-			pLagrange->position.Rotate(pi2 * -60 / 360);
+			Vector Position = GetPlanetPosition(&pPlanet->position);
+			Position.Rotate(pi2 * -60 / 360);
+			pLagrange->position = Position;
 		}
 #endif
 #if LOGL2
 		if (pLagrange->iNr >= 100)
 		{
-
 			Vector Position = GetPlanetPosition(&pPlanet->position);
 			Position.Extend( pLagrange->dL2Dist );
-
-			SetPlanetPosition( &pLagrange->position, Position);
-
+			pLagrange->position = Position;
 		}
 #endif
-//		LeaveCriticalSection(&CriticalSection);			// But here
 
 		// render all new stuff
 		for (auto& planet : game->universe.planets) {
 			planet->render();
 		}
-		LeaveCriticalSection(&CriticalSection);   // seems like it is not needed here   why ??
 
 #if TRACKS
 		{
@@ -161,11 +132,9 @@ int Display::fRender()
 			SDL_FreeSurface(sOldImage);
 			SDL_FreeSurface(infoSurface);
 		}
-#endif
 		SDL_RenderPresent(renderer);
 	}
 	printf("%s\n", SDL_GetError());
 	#endif
 	exit(1);		// Error return
 }
-#endif
