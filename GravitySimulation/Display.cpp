@@ -34,15 +34,6 @@ Vector GetPlanetPosition( Vector * pPosV )
 }
 
 //********************************** 
-/*
-// "atomic write"   :)  
-void SetPlanetPosition( Vector *pPosition, Vector Position)
-{
-	Vector PosV;
-	memcpy( pPosition, &Position, sizeof(PosV));
-}
-*/
-//********************************** 
 
 // Render planets, present new universe
 int Display::fRender()

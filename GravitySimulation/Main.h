@@ -2,14 +2,15 @@
 
 #define ELIPTIC false
 #define LOGL4 false
-#define LOGL2 true
-#define MANY false
+#define LOGL2 false
+#define MANY true
 #define SYSTEM false
 #define TWOPLANETS false
 #define SUNMOON false
 
 #define TRACKS true
 #define TRACKLEN 251
+#define MAXACC 10000.0
 
 #include <Windows.h>
 #include <time.h>
@@ -33,7 +34,7 @@ extern SDL_Window* window;
 extern Game* game;
 extern void InitDisplayThread();
 extern CRITICAL_SECTION CriticalSection;
-extern int iNPlanets;
+//extern int iNPlanets;
 extern double dTimeStep;
 
 

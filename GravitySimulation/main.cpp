@@ -11,8 +11,6 @@
  You need SDL2.lib, SDL2main.lib, zlib1.dll, libpng16-16.dll, SDL2.dll, SDL2_image.dll,
  and SDL-includes to run this when using VS2019
 
- Corrent config is a test of L2
-
  Just modified code from GitHub/Feeeeddmmmeee
 */
 
@@ -21,7 +19,6 @@ Game* game = NULL;
 long unsigned int luiIterations = 0;;
 SDL_Renderer* renderer = NULL;
 SDL_Window* window = NULL;
-CRITICAL_SECTION CriticalSection;
 int iNPlanets = 0;
 double dTimeStep = TIMESTEP;
 
@@ -31,7 +28,6 @@ int main(int argc, char* argv[])
 	Uint32 uiNow = 0;
 	Uint32 uiTimeStart = 0;
 	Uint32 luiTimeStart = 0;
-	InitializeCriticalSection(&CriticalSection);
 
 	game = new Game();
 	game->init("Gravity Simulation", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WIDTH, HIGHT, false);
