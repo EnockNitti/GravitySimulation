@@ -125,7 +125,8 @@ int Display::fRender()
 		}
 		SDL_RenderPresent(renderer);
 	}
-	printf("%s\n", SDL_GetError());
+
+ 	printf("%s\n", SDL_GetError());
 	#endif
 	exit(1);		// Error return
 }

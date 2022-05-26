@@ -21,6 +21,8 @@ public:
 	void handleEvents();
 	bool isRunning = false;
 	bool running() { return isRunning; };
+	void AddDoubblePlanet(Vector Pos, double dMass, double dDistance, int iNr);
+
 
 private:
 

@@ -38,10 +38,7 @@ void Collision( Planet* pNew, Planet* pDead)
 	pDead->iNr = 1000;			// Mark for deletion
 	pNew->acceleration.Zero();
 
-
-
 }
-
 
 static double dMaxAcceleration = 0;
 

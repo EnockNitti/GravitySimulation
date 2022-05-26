@@ -1,4 +1,4 @@
-#include "main.h"
+﻿#include "main.h"
 
 Game::Game() {};
 Game::~Game() {};
@@ -42,8 +42,7 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 	}
 
 #if MANY
-	// A random assortment of planets rotating clockwise around a sun
-	// Needs code for collision handling
+	// A random assortment of planets, rotating clockwise around a sun
 	double dSun = 100000.0;
 	universe.addPlanet(new Planet(dSun, Vector(0, 0), Vector(0, 0)));		//   "Sun"
 //#define	RAND_MAX 1000;
@@ -225,7 +224,6 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 
 #if	LOGL2
 	double dSun = 1000000.0;
-//	double dSun = 100000.0;
 	double dPlanet1 = 1000.0;
 	double dL2 = 0.01;
 	double z = 250;
@@ -250,12 +248,66 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 	universe.addPlanet(new Planet(0.00001, Vector(0, z + dL2Dist), Vector(0, 0) , 101, dL2Dist));//*/
 #endif
 
+#if BINARY
+
+/*	Binary Star System Orbital Period :
+
+	Check the semi - major axis, first body, second body mass.
+		Add the masses.Multiply the sum with the gravitational constant.
+		Divide the cube of semi - major axis by the product.
+		Find the square root of the result.
+		Multiply it with the 2π to obtain binary system orbital period.
+
+		Orbital period binary objects = 2 * π * √(a³ / (G * (M₁ + M₂)))
+*/
+
+	double dDistance = 100;		
+	double dMass = 100;
+	// This works, don't know why 
+//	double dPeriode = 2 * PI * sqrt((dDistance * dDistance * dDistance * 2) / (G * (dMass + dMass)));
+//	dSpeed = dDistance * PI / dPeriode;			// tangential
+	double dSpeed = 1.0 / (2 * sqrt( dDistance / (G * 2 * dMass )));
+
+	Vector Pos( 0, dDistance / 2 );
+	Vector Vel( dSpeed, 0.0 );
+	universe.addPlanet(new Planet(dMass, Pos, Vel, 1 ));
+
+	Vector Pos1( 0, -dDistance / 2 );
+	Vector Vel1( -dSpeed, 0.0 );
+	universe.addPlanet( new Planet( dMass, Pos1, Vel1, 2 ));
+
+	AddDoubblePlanet(Vector( 300, 300), 100, 100, 3);
+
+
+
+#endif
+
 	// This correction is needed for "unsymmetrical" systems like sun-earth
 	universe.MomentumAdjust();
 
 	InitDisplayThread();
 
 }
+#if 1
+/**************** Add a doubble planet ******************/
+
+void Game::AddDoubblePlanet(Vector CPos, double dMass, double dDistance, int iNr)
+{
+	double dSpeed = 1.0 / (2 * sqrt(dDistance / (G * 2 * dMass)));
+
+	Vector Pos = CPos;
+	Pos.y = Pos.y + dDistance / 2;
+	Vector Vel(dSpeed, 0.0);
+	universe.addPlanet(new Planet(dMass, Pos, Vel, iNr ));
+
+	Vector Pos1 = CPos;
+	Pos1.y = Pos1.y - dDistance / 2;
+	Vector Vel1(-dSpeed, 0.0);
+	universe.addPlanet(new Planet(dMass, Pos1, Vel1, iNr+1));
+}
+
+#endif
+
 
 void Game::update()
 {
