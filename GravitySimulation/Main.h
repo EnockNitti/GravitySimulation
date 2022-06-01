@@ -7,7 +7,9 @@
 #define SYSTEM false
 #define TWOPLANETS false
 #define SUNMOON false
-#define BINARY true
+#define BINARY false
+#define RANDSYSTEM true
+
 
 #define TRACKS true
 #define TRACKLEN 251
@@ -79,8 +81,8 @@ extern double dTimeStep;
 #define TIMESTEP (2.0 / ( 100000000.0 * DBGSPEED))
 
 #else
-#define G (1.0 / 8.0 )
-#define TIMESTEP (2.0 / ( 1000000.0 * DBGSPEED))
+#define G (1.0 / 16.0 )
+#define TIMESTEP (2.0 / ( 10000000.0 * DBGSPEED))
 
 
 #endif

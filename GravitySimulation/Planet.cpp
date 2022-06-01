@@ -8,21 +8,26 @@ Planet::Planet(double mass, Vector position, Vector velocity, int iNr, double dL
 	this->radius = sqrt(cbrt(mass / DENSITY / PI / 3));
 	if (this->radius < 1) this->radius = 1;
 
-	this->acceleration = Vector();
+	this->acceleration.Zero();
 	this->mass = mass;
 	this->position = position;
 	this->velocity = velocity * sqrt(dTimeStep);
 	this->Momentum = this->velocity * mass;
 	this->iNr = iNr;
-	this->dL2Dist = dL2Dist;
+	this->dL2Dist = dL2Dist;		// For use with L2 simulation
 
 	const char* q;
 	SDL_Surface* tempSurface;
 
-	if (iNr < 100)
+	if (iNr < 100) {
+		tempSurface = IMG_Load("explo.png");
+		this->texture2 = SDL_CreateTextureFromSurface(renderer, tempSurface);
+		q = SDL_GetError();
 		tempSurface = IMG_Load("planet.png");
+	}
 	else
 		tempSurface = IMG_Load("Marker.png");
+
 	q = SDL_GetError();
 	this->texture = SDL_CreateTextureFromSurface(renderer, tempSurface);
 	q = SDL_GetError();
@@ -32,23 +37,29 @@ Planet::Planet(double mass, Vector position, Vector velocity, int iNr, double dL
 
 void Collision( Planet* pNew, Planet* pDead)
 {
+	printf("%d %g %g %g    %d %g %g %g\n",
+		pNew->iNr, pNew->velocity.x, pNew->velocity.y, pNew->mass,
+		pDead->iNr, pDead->velocity.x, pDead->velocity.y, pDead->mass);
+
 	Vector TotMomentum = pNew->velocity * pNew->mass + pDead->velocity * pDead->mass;
 	double dTotMass = pNew->mass + pDead->mass;
 	pNew->velocity = TotMomentum / dTotMass;
-	pDead->iNr = 1000;			// Mark for deletion
-	pNew->acceleration.Zero();
-
+	pNew->mass = dTotMass;
+	pDead->iNr += 1000;			// Mark for deletion
+	pNew->iHot = 500;			// "glow" for some time
+	printf("%d %g %g %g\n",	pNew->iNr, pNew->velocity.x, pNew->velocity.y, pNew->mass);
 }
 
 static double dMaxAcceleration = 0;
 
 /**********      Update accelerations  **************/
 
-double Planet::updateAccs( int iPlanet, std::vector<Planet*> planets)
+void Planet::updateAccs( int iPlanet, std::vector<Planet*> planets)
 {
 double dMaxAcc = 0;
 static 	double dHighAcc = 0;
-
+	
+	if (planets[ iPlanet ]->iNr >= 100 ) return;
 	for (int i = iPlanet + 1; i < planets.size(); i++)
 	{
 		Planet* other = planets[ i ];
@@ -77,12 +88,13 @@ static 	double dHighAcc = 0;
 		{
 			if (this->mass > other->mass) {
 				Collision( this, other);
-				dMaxAcc = 0;
 			}
 			else {
 				Collision( other, this );
-				dMaxAcc = 0;
 			}
+			dMaxAcc = 0;
+			this->acceleration.Zero();
+			other->acceleration.Zero();
 		}
 		luiIterations++;
 	}
@@ -91,7 +103,7 @@ static 	double dHighAcc = 0;
 		dHighAcc = dMaxAcc;
 		printf("%e\n", dHighAcc);
 	}
-	return dMaxAcc * dTimeStep;
+	return;
 }
 
 /*************************************/
@@ -105,12 +117,18 @@ void Planet::updateVelocityAndPosition()
 // Render one planet/marker
 void Planet::render()
 {
-	destRect.w = destRect.h = (int)radius * 2;
+	SDL_Texture *Texture = texture;
+	int Radius = this->radius;
+	if (iHot > 0) {
+		iHot--;
+		Radius *= 2;
+		Texture = texture2;
+	}
+	destRect.w = destRect.h = (int)Radius * 2;
+	destRect.x = (int)(position.x - Radius + WIDTH / 2);
+	destRect.y = HIGHT - (int)(position.y + Radius + HIGHT / 2);			// Y upp, center origo
 
-	destRect.x = (int)(position.x - radius + WIDTH / 2);
-	destRect.y = HIGHT - (int)(position.y + radius + HIGHT / 2);			// Y upp, center origo
-
-	if (SDL_RenderCopy(renderer, texture, 0, &destRect) != 0)
+	if (SDL_RenderCopy( renderer, Texture, 0, &destRect ) != 0)
 	{
 		printf("%s\n", SDL_GetError());
 		exit(1);		

@@ -194,6 +194,7 @@
     <ClInclude Include="Vector.h" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="Explo.png" />
     <Image Include="Marker.png" />
     <Image Include="planet.png" />
   </ItemGroup>

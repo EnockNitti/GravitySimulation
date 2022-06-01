@@ -266,6 +266,7 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 	// This works, don't know why 
 //	double dPeriode = 2 * PI * sqrt((dDistance * dDistance * dDistance * 2) / (G * (dMass + dMass)));
 //	dSpeed = dDistance * PI / dPeriode;			// tangential
+	// This works, don't know why 
 	double dSpeed = 1.0 / (2 * sqrt( dDistance / (G * 2 * dMass )));
 
 	Vector Pos( 0, dDistance / 2 );
@@ -278,7 +279,24 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 
 	AddDoubblePlanet(Vector( 300, 300), 100, 100, 3);
 
+#elif RANDSYSTEM
 
+	double dSun = 100000.0;
+	double dMass = 100.0;
+	double dDist = 250;
+	double alpha = PI / 4;
+	srand(time(NULL));
+
+	universe.addPlanet(new Planet(dSun, Vector(0, 0), Vector(0, 0), 0));		//   "Sun"
+
+	for (int i = 0; i < 30; i++)
+	{
+		dDist = rand() % 450 + 50;
+		alpha = double(rand() % int( 2 * PI * 1000 ));
+		alpha /= 1000;
+
+		PlanetOrbit(universe.planets[0], alpha, dMass, dDist, i + 1 );
+	}
 
 #endif
 
@@ -291,7 +309,7 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 #if 1
 /**************** Add a doubble planet ******************/
 
-void Game::AddDoubblePlanet(Vector CPos, double dMass, double dDistance, int iNr)
+void Game::AddDoubblePlanet(Vector CPos, double dMass, double dDistance, int iNr )
 {
 	double dSpeed = 1.0 / (2 * sqrt(dDistance / (G * 2 * dMass)));
 
@@ -306,6 +324,24 @@ void Game::AddDoubblePlanet(Vector CPos, double dMass, double dDistance, int iNr
 	universe.addPlanet(new Planet(dMass, Pos1, Vel1, iNr+1));
 }
 
+/********************** Add a planet in cirkulat orbit around Central planet at a specified distance and angle( +X axis )   *******************/
+void Game::PlanetOrbit(Planet *pCPlanet, double alpha, double dMass, double dDistance, int iNr )
+{
+	Vector Position(dDistance, 0.0);
+	Position.Rotate( alpha );
+	Position = pCPlanet->position + Position;
+
+	double dSpeed = sqrt(G * (( pCPlanet->mass + dMass ) / dDistance ));
+	Vector Velocity( 0.0, -dSpeed );
+	Velocity.Rotate( alpha );
+	Velocity = pCPlanet->velocity + Velocity;
+
+	universe.addPlanet(new Planet( dMass, Position, Velocity, iNr ));
+
+
+
+
+}
 #endif
 
 
